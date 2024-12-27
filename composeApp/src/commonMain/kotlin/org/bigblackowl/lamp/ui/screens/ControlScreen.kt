@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,15 +50,11 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ControlScreen(
-    ledControlViewModel: LedControlViewModel,
-    navController: NavHostController,
-    deviceName: String
+    ledControlViewModel: LedControlViewModel, navController: NavHostController, deviceName: String
 ) {
     LaunchedEffect(Unit) {
-        if (deviceName.isNotEmpty())
-            ledControlViewModel.connect(deviceName)
-        else
-            navController.popBackStack()
+        if (deviceName.isNotEmpty()) ledControlViewModel.connect(deviceName)
+        else navController.popBackStack()
     }
 
     val connectionState by ledControlViewModel.connectionState.collectAsState()
@@ -78,42 +72,37 @@ fun ControlScreen(
     }
     val controller = rememberColorPickerController()
     controller.debounceDuration = 800L
-    val scope = rememberCoroutineScope()
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            ControlScreenTopAppBar(
-                ledControlViewModel,
-                connectionState,
-                deviceName,
-                ledState,
-                navController
-            )
-        }
-    ) { newPadding ->
-        Column(
-            Modifier.padding(newPadding).fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            if (connectionState.state) {
-                AnimatedVisibility(
-                    visible = ledState,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
+//    val scope = rememberCoroutineScope()
+    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
+        ControlScreenTopAppBar(
+            ledControlViewModel, connectionState, deviceName, ledState, navController
+        )
+    }) { newPadding ->
+
+        if (connectionState.state) {
+            AnimatedVisibility(
+                visible = ledState,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                Column(
+                    Modifier.padding(newPadding).fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
+                    LedModeDropdown(currentMode = deviceStatus.currentMode,
+                        modes = deviceStatus.modes,
+                        onModeSelected = { index ->
+                            ledControlViewModel.setMode(index)
+                        })
                     when (deviceStatus.currentMode) {
                         0, 2, 3, 4, 5, 8 -> {
                             key(color) {
-                                ColorControl(
-                                    onColorChanged = { colorEnvelope: ColorEnvelope ->
-                                        ledControlViewModel.setColor(colorEnvelope.hexCode)
-                                    },
-                                    onColorSelected = { color ->
-                                        ledControlViewModel.setColor(color.toHexString())
-                                    },
-                                    initialColor = color,
-                                    controller = controller
+                                ColorControl(onColorChanged = { colorEnvelope: ColorEnvelope ->
+                                    ledControlViewModel.setColor(colorEnvelope.hexCode)
+                                }, onColorSelected = { color ->
+                                    ledControlViewModel.setColor(color.toHexString())
+                                }, initialColor = color, controller = controller
                                 )
                             }
                         }
@@ -131,21 +120,69 @@ fun ControlScreen(
                         }
 
                         9 -> {
-                            FlagMode(
-                                deviceStatus.flagIsStatic, onCheckedChange = { state ->
-                                    ledControlViewModel.setFlagState(state)
-                                }, flagSpeed,
-                                onValueChange = { value ->
-                                    flagSpeed = value
-                                }, onValueChangeFinished = {
-                                    ledControlViewModel.setFlagSpeed(flagSpeed.roundToInt())
-                                }
-                            )
+                            FlagMode(deviceStatus.flagIsStatic, onCheckedChange = { state ->
+                                ledControlViewModel.setFlagState(state)
+                            }, flagSpeed, onValueChange = { value ->
+                                flagSpeed = value
+                            }, onValueChangeFinished = {
+                                ledControlViewModel.setFlagSpeed(flagSpeed.roundToInt())
+                            })
                         }
 
                         else -> {}
                     }
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (deviceStatus.ledState) {
+                            Button(onClick = {
+                                isTimerWindowOpen = !isTimerWindowOpen
+                            }) {
+                                if (deviceStatus.timerIsActive) {
+                                    Text(
+                                        "Timer set on "
+                                                +
+                                                "${deviceStatus.timer.hour}".padStart(2, '0')
+                                                +
+                                                ":"
+                                                +
+                                                "${deviceStatus.timer.minute}".padStart(2, '0'),
+                                        color = Color.Red
+                                    )
+                                } else {
+                                    Text("Set up timer")
+                                }
+                            }
+                        }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+                            if (deviceStatus.temperature != 0.0f && deviceStatus.humidity != 0.0f) {
+                                Text(
+                                    "Temperature: ${deviceStatus.temperature} °C",
+                                    color = Color.White
+                                )
+                                Spacer(Modifier.width(50.dp))
+                                Text("Humidity: ${deviceStatus.humidity} %", color = Color.White)
+                            } else {
+                                Text(
+                                    "Temperature and humidity sensor not connected!",
+                                    color = Color.Gray,
+                                    maxLines = 2,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
                 }
+            }
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 AnimatedVisibility(
                     visible = !ledState,
                     enter = fadeIn(),
@@ -161,8 +198,9 @@ fun ControlScreen(
                         )
                     }
                 }
-            } else {
-                ProgressIndicator(Modifier.fillMaxSize())
+            }
+        } else {
+            ProgressIndicator(Modifier.fillMaxSize())
 //                scope.launch {
 //                    delay(4000)
 //                    println("Reconnect to device")
@@ -170,82 +208,20 @@ fun ControlScreen(
 //                    delay(4000)
 //                    if (!connectionState.state) navController.popBackStack()
 //                }
-            }
-        }
-        if (connectionState.state) {
-            if (ledState) {
-                Box(
-                    modifier = Modifier.padding(newPadding).fillMaxSize(),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    LedModeDropdown(
-                        currentMode = deviceStatus.currentMode,
-                        modes = deviceStatus.modes,
-                        onModeSelected = { index ->
-                            ledControlViewModel.setMode(index)
-                        }
-                    )
-                }
-            }
-            Box(
-                Modifier.padding(newPadding).fillMaxSize().padding(bottom = 20.dp),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (deviceStatus.ledState) {
-                        Button(onClick = {
-                            isTimerWindowOpen = !isTimerWindowOpen
-                        }) {
-                            if (deviceStatus.timerIsActive) {
-                                Text(
-                                    "Timer set on ${deviceStatus.timer.hour}: ${deviceStatus.timer.minute}",
-                                    color = Color.Red
-                                )
-                            } else {
-                                Text("Set up timer ")
-                            }
-                        }
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        if (deviceStatus.temperature != 0.0f && deviceStatus.humidity != 0.0f) {
-                            Text("Temperature: ${deviceStatus.temperature} °C", color = Color.White)
-                            Spacer(Modifier.width(50.dp))
-                            Text("Humidity: ${deviceStatus.humidity} %", color = Color.White)
-                        } else {
-                            Text(
-                                "Temperature and humidity sensor not connected!",
-                                color = Color.Gray,
-                                maxLines = 2,
-                                fontSize = 12.sp
-                            )
-                        }
-                    }
-                }
-            }
+
         }
     }
 
     if (isTimerWindowOpen) {
-        TimerDialog(
-            isTimerSetOn = deviceStatus.timerIsActive,
-            onDismissRequest = {
-                isTimerWindowOpen = false
-            },
-            onSetTimerClicked = { timer ->
-                ledControlViewModel.setTimer(timer)
-                isTimerWindowOpen = false
-            },
-            onCancelTimerClicked = {
-                ledControlViewModel.cancelTimer()
-                isTimerWindowOpen = false
-            }
-        )
+        TimerDialog(isTimerSetOn = deviceStatus.timerIsActive, onDismissRequest = {
+            isTimerWindowOpen = false
+        }, onSetTimerClicked = { timer ->
+            ledControlViewModel.setTimer(timer)
+            isTimerWindowOpen = false
+        }, onCancelTimerClicked = {
+            ledControlViewModel.cancelTimer()
+            isTimerWindowOpen = false
+        })
     }
 }
 

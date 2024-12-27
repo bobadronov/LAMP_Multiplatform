@@ -1,8 +1,7 @@
 package org.bigblackowl.lamp.ui.items
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -21,32 +20,28 @@ fun LedModeDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedModeIndex by remember { mutableStateOf(currentMode) }
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Button(
+        onClick = {
+            expanded = true
+        },
+        modifier = Modifier.fillMaxWidth(.5f)
     ) {
-        Button(
-            onClick = { expanded = true }, modifier = Modifier.fillMaxWidth(.5f)
+        Text(text = "Mode: ${modes[selectedModeIndex]}")
+        // Выпадающее меню
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth(.4f)
         ) {
-            Text(text = "Mode: ${modes[selectedModeIndex]}")
-            // Выпадающее меню
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                modes.forEachIndexed { index, mode ->
-                    DropdownMenuItem(text = {
-                        Text(text = mode)
-                    }, onClick = {
-                        selectedModeIndex = index
-                        onModeSelected(index)
-                        expanded = false
-                    }, modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
+            modes.forEachIndexed { index, mode ->
+                DropdownMenuItem(text = {
+                    Text(text = mode, modifier = Modifier.wrapContentSize(Alignment.Center))
+                }, onClick = {
+                    selectedModeIndex = index
+                    onModeSelected(index)
+                    expanded = false
+                }, modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
         }
     }

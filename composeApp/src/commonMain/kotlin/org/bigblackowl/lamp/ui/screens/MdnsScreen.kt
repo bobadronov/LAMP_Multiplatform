@@ -47,7 +47,7 @@ fun MdnsScreen(
     val state = rememberPullToRefreshState()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp).padding(paddingValues)
+        modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp).padding(paddingValues)
             .consumeWindowInsets(paddingValues).onKeyEvent {
                 if (it.key == Key.F5 && it.type == KeyEventType.KeyDown) {
                     mdnsViewModel.startDiscovery()

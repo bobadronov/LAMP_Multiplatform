@@ -138,8 +138,11 @@ class WebSocketClient {
     suspend fun setupTimer(timer: Timer) {
         val jsonContent = json.encodeToString(
             mapOf(
+                "day" to timer.day,
+                "month" to timer.month,
+                "year" to timer.year,
                 "hour" to timer.hour,
-                "minute" to timer.minute,
+                "minute" to timer.minute
             )
         )
         val message = "TIME:${jsonContent}"
