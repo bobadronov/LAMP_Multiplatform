@@ -50,7 +50,7 @@ fun CustomMode(
     // Равномерное деление LED по секциям
     // Округляем в большую сторону, если нужно
     val ledsPerSection =
-        if (numLeds <= 10) numLeds else (kotlin.math.ceil(numLeds / numSections.toDouble())).toInt()
+        if (numLeds <= 10) 10 else (kotlin.math.ceil(numLeds / numSections.toDouble())).toInt()
 
     Column(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -130,7 +130,7 @@ fun CustomMode(
             ledColors = List(numLeds) { "#000000" }
             onValueChange(ledColors)  // Обновить внешний стейт
         }) {
-            Text("Clear")
+            Text("Clear", color = Color.Black)
         }
     }
 }

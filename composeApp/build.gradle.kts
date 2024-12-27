@@ -1,7 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val version = "1.0.5"
+val version = "1.0.6"
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SetupEspCredential(
-    val ssid: String = "",
-    val password: String = "",
-    val deviceName: String = ""
+    val ssid: String,
+    val password: String,
+    val deviceName: String,
 )

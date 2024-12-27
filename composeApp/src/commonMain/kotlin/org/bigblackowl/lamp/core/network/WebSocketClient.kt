@@ -127,7 +127,7 @@ class WebSocketClient {
             mapOf(
                 "ssid" to setupEspCredential.ssid,
                 "password" to setupEspCredential.password,
-                "deviceName" to setupEspCredential.deviceName
+                "deviceName" to setupEspCredential.deviceName,
             )
         )
         // Добавление префикса "wifi" перед JSON-строкой
@@ -151,6 +151,7 @@ class WebSocketClient {
             )
         )
         val message = "TIME:${jsonContent}"
+        println("TIME: $message")
         try {
             session?.send(Frame.Text(message))
         } catch (e: Exception) {
@@ -159,7 +160,6 @@ class WebSocketClient {
     }
 
     suspend fun cancelTimer() {
-//        val message = json.encodeToString()
         try {
             session?.send(Frame.Text("CANCEL_TIMER"))
         } catch (e: Exception) {

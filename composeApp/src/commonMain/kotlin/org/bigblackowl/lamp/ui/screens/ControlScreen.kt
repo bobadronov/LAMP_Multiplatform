@@ -286,7 +286,7 @@ fun ControlScreen(
         } else {
             ProgressIndicator(Modifier.fillMaxSize())
             scope.launch {
-                delay(4000)
+                delay(3000)
                 if (!connectionState.state) navController.popBackStack()
             }
         }

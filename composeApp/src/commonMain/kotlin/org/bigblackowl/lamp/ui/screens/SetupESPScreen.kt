@@ -184,13 +184,16 @@ fun SetupESPScreen(
                 isError = deviceName.text.isBlank() || deviceName.text.length < 3,
                 colors = neonTextFieldColors
             )
+
             Spacer(Modifier.height(100.dp))
             if (connectionState.state && pass.text.isNotBlank() && pass.text.length >= 8 && ssid.text.isNotBlank() && ssid.text.length >= 2) {
                 Button(
                     onClick = {
                         ledControlViewModel.setupESP(
                             SetupEspCredential(
-                                ssid = ssid.text, password = pass.text, deviceName = deviceName.text
+                                ssid = ssid.text,
+                                password = pass.text,
+                                deviceName = deviceName.text
                             )
                         )
                         navController.navigate(ScreensRoute.MdnsScreensRoute.route) {
