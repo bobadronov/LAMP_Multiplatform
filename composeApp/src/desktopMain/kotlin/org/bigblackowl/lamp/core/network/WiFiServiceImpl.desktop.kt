@@ -11,8 +11,9 @@ import java.io.InputStreamReader
 actual class WiFiServiceImpl() : WiFiService {
     // StateFlow to hold available networks
     private val _availableNetworks = MutableStateFlow<List<WiFiNetwork>>(emptyList())
-    override val availableNetworks: StateFlow<List<WiFiNetwork>> = _availableNetworks
-    override suspend fun getAvailableNetworks() {
+    actual override val availableNetworks: StateFlow<List<WiFiNetwork>> = _availableNetworks
+
+    actual override suspend fun getAvailableNetworks() {
         return withContext(Dispatchers.IO) {
             val process = ProcessBuilder("netsh", "wlan", "show", "profiles").start()
             val output = BufferedReader(InputStreamReader(process.inputStream, Charsets.UTF_8)).readText()

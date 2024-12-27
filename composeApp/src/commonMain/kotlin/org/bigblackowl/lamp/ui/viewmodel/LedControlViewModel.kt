@@ -164,4 +164,14 @@ class LedControlViewModel(
             }
         }
     }
+
+    fun reboot() {
+        viewModelScope.launch {
+            try {
+                webSocketClient.reboot()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }

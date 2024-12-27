@@ -181,4 +181,12 @@ class WebSocketClient {
         val message = json.encodeToString(mapOf("commonBrightness" to commonBrightness.toInt()))
         sendSetupMessage(message)
     }
+
+    suspend fun reboot() {
+        try {
+            session?.send(Frame.Text( "REBOOT"))
+        } catch (e: Exception) {
+            println("Error sending message: ${e.message}")
+        }
+    }
 }

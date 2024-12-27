@@ -17,10 +17,10 @@ actual class WiFiServiceImpl(private val context: Context) : WiFiService {
 
     // StateFlow to hold available networks
     private val _availableNetworks = MutableStateFlow<List<WiFiNetwork>>(emptyList())
-    override val availableNetworks: StateFlow<List<WiFiNetwork>> = _availableNetworks
+    actual override val availableNetworks: StateFlow<List<WiFiNetwork>> = _availableNetworks
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override suspend fun getAvailableNetworks() {
+    actual override suspend fun getAvailableNetworks() {
         val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         println("WiFiServiceImpl wifiManager: $wifiManager")
 

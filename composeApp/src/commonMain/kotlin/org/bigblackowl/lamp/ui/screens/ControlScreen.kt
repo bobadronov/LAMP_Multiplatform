@@ -95,6 +95,9 @@ fun ControlScreen(
                 navController = navController,
                 offLedClicked = {
                     ledControlViewModel.setLedState(false)
+                },
+                onRebootClicked = {
+                    ledControlViewModel.reboot()
                 }
             )
         }

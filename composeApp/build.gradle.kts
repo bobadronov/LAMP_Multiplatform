@@ -38,7 +38,6 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.ktor.client.okhttp)
@@ -56,24 +55,18 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             implementation(libs.jetbrains.compose.navigation)
-
             implementation(libs.kotlinx.serialization.json)
-
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             api(libs.koin.core)
-
             implementation(libs.bundles.ktor)
-
             implementation(libs.colorpicker.compose)
-
             implementation(libs.dns.sd.kt)
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
-
             implementation(libs.ktor.client.okhttp)
         }
 
@@ -129,14 +122,22 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "org.bigblackowl.lamp.MainKt"
-
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ESP_LAMP_Multiplatform"
-
             description = "BigBlackOwl"
-
             packageVersion = version
+//            macOS {
+//                iconFile.set(project.file("icon.icns"))
+//            }
+            windows {
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/on-off.ico"))
+                dirChooser = true
+
+            }
+//            linux {
+//                iconFile.set(project.file("icon.png"))
+//            }
         }
     }
 }

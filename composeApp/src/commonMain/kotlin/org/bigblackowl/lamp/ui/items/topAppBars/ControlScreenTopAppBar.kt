@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -40,6 +42,7 @@ fun ControlScreenTopAppBar(
     ledState: Boolean,
     navController: NavHostController,
     offLedClicked: () -> Unit,
+    onRebootClicked:()->Unit
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     var openInfo by remember { mutableStateOf(false) }
@@ -123,6 +126,25 @@ fun ControlScreenTopAppBar(
                                 )
                             }
                         )
+                        HorizontalDivider()
+                        DropdownMenuItem(
+                            text = {
+                                Text("Reboot ")
+                            },
+                            onClick = {
+                                isMenuExpanded = false
+                                onRebootClicked()
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Default.Refresh,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(35.dp),
+                                    tint = Color.Gray,
+                                )
+                            }
+                        )
+                        HorizontalDivider()
                         DropdownMenuItem(
                             text = {
                                 Text("Info ")

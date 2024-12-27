@@ -2,6 +2,7 @@ package org.bigblackowl.lamp
 
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -13,12 +14,24 @@ import org.jetbrains.compose.resources.painterResource
 fun main() = application {
     initKoin()
     val state = rememberWindowState(size = DpSize(700.dp, 950.dp))
+    val icon = painterResource(Res.drawable.on_button)
+    Tray(
+        icon = icon,
+        tooltip= "ESP_LAMP_Multiplatform",
+        menu = {
+            Item(
+                text = "Quit App",
+//                icon = Icons.AutoMirrored.Filled.ExitToApp,
+                onClick = ::exitApplication
+            )
+        }
+    )
     Window(
         onCloseRequest = ::exitApplication,
         state = state,
-        title = "LAMP_Multiplatform",
+        title = "ESP_LAMP_Multiplatform",
         resizable = false,
-        icon = painterResource(Res.drawable.on_button),
+        icon = icon,
     ) {
         App()
     }
