@@ -1,6 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+val version = "1.0.5"
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -99,7 +101,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = version
     }
     packaging {
         resources {
@@ -134,7 +136,7 @@ compose.desktop {
 
             description = "BigBlackOwl"
 
-            packageVersion = "1.0.1"
+            packageVersion = version
         }
     }
 }
