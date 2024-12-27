@@ -49,7 +49,7 @@ fun RainbowMode(
 
         Text("Brightness:", color = Color.White)
         Slider(
-            value = commonBrightness, valueRange = 1f..255f, // Значения диапазона
+            value = commonBrightness, valueRange = 10f..255f,
 //            steps = 8,
             onValueChange = onBrightnessChange,
             onValueChangeFinished = onBrightnessChangeFinished

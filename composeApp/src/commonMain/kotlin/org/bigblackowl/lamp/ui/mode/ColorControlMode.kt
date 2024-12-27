@@ -36,24 +36,24 @@ fun ColorControlMode(
         HsvColorPicker(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp),
+                .height(300.dp)
+                .padding(bottom = 20.dp),
             controller = controller,
             onColorChanged = onColorChanged,
             initialColor = initialColor
         )
-
         BrightnessSlider(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(70.dp)
-                .padding(10.dp), controller = controller
+                .height(50.dp)
+                .padding(horizontal = 20.dp), controller = controller
         )
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(10.dp))
         LazyVerticalGrid(
             columns = GridCells.Fixed(5),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                .padding(horizontal = 10.dp),
 //            contentPadding = PaddingValues(15.dp)
         ) {
             items(DefaultColorList.size) { index ->

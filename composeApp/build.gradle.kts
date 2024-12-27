@@ -139,5 +139,8 @@ compose.desktop {
 //                iconFile.set(project.file("icon.png"))
 //            }
         }
+        buildTypes.release.proguard {
+            version.set("7.4.0")
+        }
     }
 }

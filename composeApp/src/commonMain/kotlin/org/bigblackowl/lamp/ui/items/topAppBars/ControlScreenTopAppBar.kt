@@ -1,11 +1,14 @@
 package org.bigblackowl.lamp.ui.items.topAppBars
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import lamp_multiplatform.composeapp.generated.resources.Res
 import lamp_multiplatform.composeapp.generated.resources.on_button
-import lamp_multiplatform.composeapp.generated.resources.wifi
 import org.bigblackowl.lamp.data.ConnectionState
 import org.bigblackowl.lamp.data.DeviceStatus
 import org.bigblackowl.lamp.ui.items.dialog.InfoDialog
@@ -42,7 +44,7 @@ fun ControlScreenTopAppBar(
     ledState: Boolean,
     navController: NavHostController,
     offLedClicked: () -> Unit,
-    onRebootClicked:()->Unit
+    onRebootClicked: () -> Unit
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     var openInfo by remember { mutableStateOf(false) }
@@ -72,7 +74,7 @@ fun ControlScreenTopAppBar(
             }
         },
         actions = {
-            if (connectionState.state && ledState) {
+            AnimatedVisibility(connectionState.state && ledState) {
                 IconButton(
                     onClick = offLedClicked,
                     modifier = Modifier.padding(end = 15.dp)
@@ -90,7 +92,7 @@ fun ControlScreenTopAppBar(
                 modifier = Modifier.padding(end = 15.dp),
                 color = if (connectionState.state) Color.Green else Color.Red,
             )
-            if (connectionState.state) {
+            AnimatedVisibility(connectionState.state) {
                 IconButton(
                     onClick = {
                         isMenuExpanded = !isMenuExpanded
@@ -112,14 +114,15 @@ fun ControlScreenTopAppBar(
 
                         DropdownMenuItem(
                             text = {
-                                Text("Setup WiFi")
+                                Text("Setup")
                             },
                             onClick = {
+                                isMenuExpanded = false
                                 navController.navigate(ScreensRoute.SetupESPScreen.route)
                             },
                             trailingIcon = {
                                 Icon(
-                                    painterResource(Res.drawable.wifi),
+                                    Icons.Default.Settings,
                                     contentDescription = null,
                                     modifier = Modifier.size(35.dp),
                                     tint = Color.Gray,
@@ -150,12 +153,12 @@ fun ControlScreenTopAppBar(
                                 Text("Info ")
                             },
                             onClick = {
-                                openInfo = !openInfo
                                 isMenuExpanded = false
+                                openInfo = !openInfo
                             },
                             trailingIcon = {
                                 Icon(
-                                    painterResource(Res.drawable.wifi),
+                                    Icons.Default.Info,
                                     contentDescription = null,
                                     modifier = Modifier.size(35.dp),
                                     tint = Color.Gray,
@@ -165,7 +168,7 @@ fun ControlScreenTopAppBar(
                     }
                 }
             }
-            if (openInfo) {
+            AnimatedVisibility(openInfo) {
                 InfoDialog(
                     deviceStatus = deviceStatus,
                     onDismiss = {
@@ -173,7 +176,6 @@ fun ControlScreenTopAppBar(
                         isMenuExpanded = true
                     }
                 )
-
             }
         }
     )

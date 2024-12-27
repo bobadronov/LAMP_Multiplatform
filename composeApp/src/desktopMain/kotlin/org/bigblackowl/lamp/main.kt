@@ -24,6 +24,9 @@ fun main() = application {
 //                icon = Icons.AutoMirrored.Filled.ExitToApp,
                 onClick = ::exitApplication
             )
+        },
+        onAction ={
+            state.isMinimized = !state.isMinimized
         }
     )
     Window(

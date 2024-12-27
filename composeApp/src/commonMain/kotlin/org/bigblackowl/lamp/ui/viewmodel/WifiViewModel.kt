@@ -8,10 +8,9 @@ import kotlinx.coroutines.launch
 import org.bigblackowl.lamp.core.network.WiFiNetwork
 import org.bigblackowl.lamp.core.network.WiFiServiceImpl
 
-class SetupDeviceViewModel(private val wifiService: WiFiServiceImpl) : ViewModel() {
+class WifiViewModel(private val wifiService: WiFiServiceImpl) : ViewModel() {
     private val _wifiNetworks = MutableStateFlow<List<WiFiNetwork>>(emptyList())
     val wifiNetworks: StateFlow<List<WiFiNetwork>> = _wifiNetworks
-
 
     fun loadNetworks() {
         viewModelScope.launch {

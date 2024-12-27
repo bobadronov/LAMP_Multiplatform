@@ -16,6 +16,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bigblackowl.lamp.data.ConnectionState
 import org.bigblackowl.lamp.data.DeviceStatus
+import org.bigblackowl.lamp.data.ErrorStatus
 import org.bigblackowl.lamp.data.SetupEspCredential
 import org.bigblackowl.lamp.data.Timer
 import kotlin.time.Duration
@@ -33,6 +34,7 @@ class WebSocketClient {
     suspend fun connect(
         host: String,
         incomingListener: (DeviceStatus) -> Unit,
+        errorListener: (ErrorStatus) -> Unit,
         connectionStateListener: (ConnectionState) -> Unit
     ) {
         println("Attempting to connect to WebSocket server at host: $host")
@@ -48,14 +50,40 @@ class WebSocketClient {
                         val message = incoming.receive() as? Frame.Text
                         message?.let {
                             val text = it.readText()
-                            //println("Received message: $text")
-                            try {
-                                val deviceStatus = json.decodeFromString<DeviceStatus>(text)
-                                connectionStateListener(ConnectionState(true))
-                                incomingListener(deviceStatus)
-                            } catch (e: Exception) {
-                                println("Error decoding message: ${e.message}")
-                                connectionStateListener(ConnectionState(false))
+                            println("Received message: $text")
+                            // if start with ("STATUS:") trim STATUS: then next
+                            when {
+                                text.startsWith("STATUS:") -> {
+                                    val statusText = text.removePrefix("STATUS:")
+                                    try {
+                                        val deviceStatus =
+                                            json.decodeFromString<DeviceStatus>(statusText)
+                                        connectionStateListener(ConnectionState(true))
+                                        incomingListener(deviceStatus)
+                                    } catch (e: Exception) {
+                                        println("Error decoding STATUS message: ${e.message}")
+                                        connectionStateListener(ConnectionState(false))
+                                    }
+                                }
+
+                                text.startsWith("ERROR:") -> {
+                                    val errorText = text.removePrefix("ERROR:")
+                                    println("Received error: $errorText")
+                                    try {
+                                        val errorStatus =
+                                            json.decodeFromString<ErrorStatus>(errorText)
+                                        errorListener(errorStatus)
+                                        // Дополнительная логика обработки ошибок
+                                    } catch (e: Exception) {
+                                        println("Error decoding STATUS message: ${e.message}")
+                                        connectionStateListener(ConnectionState(false))
+                                    }
+                                }
+
+                                else -> {
+                                    println("Unknown message format: $text")
+                                    // Обработка других случаев, если нужно
+                                }
                             }
                         }
                     }
@@ -184,9 +212,26 @@ class WebSocketClient {
 
     suspend fun reboot() {
         try {
-            session?.send(Frame.Text( "REBOOT"))
+            session?.send(Frame.Text("REBOOT"))
         } catch (e: Exception) {
             println("Error sending message: ${e.message}")
         }
+    }
+
+    suspend fun setLedCount(value: Int) {
+        val message = json.encodeToString(mapOf("REAL_NUM_LEDS" to value))
+//        println("setLedCount: $message")
+        sendSetupMessage(message)
+    }
+
+    suspend fun setGradient(list: List<String>) {
+        val message = json.encodeToString(mapOf("customGradient" to list))
+//        println("setGradient: $message")
+        sendSetupMessage(message)
+    }
+
+    suspend fun setFadeSpeed(fadeSpeed: Float) {
+        val message = json.encodeToString(mapOf("breathingSpeed" to fadeSpeed))
+        sendSetupMessage(message)
     }
 }
