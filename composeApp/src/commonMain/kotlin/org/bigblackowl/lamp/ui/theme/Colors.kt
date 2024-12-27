@@ -26,7 +26,7 @@ val DefaultColorList = listOf(
 
 
 val DarkBackground = Color(0xff171717)
-val LightBackground = Color(0xffcacaca)
+val LightBackground = Color(0xffafaeae)
 
 val PrimaryColor = Color(0xFF00FF00)  // Neon Green
 val SecondaryColor = Color(0xFF00FFFF)  // Neon Blue
@@ -99,6 +99,7 @@ val neonTextFieldColors = TextFieldColors(
     disabledSuffixColor = darkGray,
     errorSuffixColor = ErrorColor
 )
+
 val darkColorPalette = darkColorScheme(
     primary = PrimaryColor,
     secondary = SecondaryColor,

@@ -48,7 +48,7 @@ class WebSocketClient {
                         val message = incoming.receive() as? Frame.Text
                         message?.let {
                             val text = it.readText()
-                            println("Received message: $text")
+                            //println("Received message: $text")
                             try {
                                 val deviceStatus = json.decodeFromString<DeviceStatus>(text)
                                 connectionStateListener(ConnectionState(true))
@@ -75,6 +75,20 @@ class WebSocketClient {
             session = null
             connectionStateListener(ConnectionState(false))
         }
+    }
+
+    private suspend fun sendSetupMessage(value: String) {
+        try {
+            val message = "SETUP:$value"
+            session?.send(Frame.Text(message))
+        } catch (e: Exception) {
+            println("Error sending message: ${e.message}")
+        }
+    }
+
+    suspend fun close(connectionStateListener: (ConnectionState) -> Unit) {
+        session?.close(CloseReason(CloseReason.Codes.NORMAL, "Client closed"))
+        connectionStateListener(ConnectionState(false))
     }
 
     suspend fun sendLedState(ledState: Boolean) {
@@ -105,15 +119,6 @@ class WebSocketClient {
     suspend fun setRainbowSpeed(rainbowSpeed: Float) {
         val message = json.encodeToString(mapOf("rainbowSpeed" to rainbowSpeed))
         sendSetupMessage(message)
-    }
-
-    private suspend fun sendSetupMessage(value: String) {
-        try {
-            val message = "SETUP:$value"
-            session?.send(Frame.Text(message))
-        } catch (e: Exception) {
-            println("Error sending message: ${e.message}")
-        }
     }
 
     suspend fun setupESP(setupEspCredential: SetupEspCredential) {
@@ -153,11 +158,6 @@ class WebSocketClient {
         }
     }
 
-    suspend fun close(connectionStateListener: (ConnectionState) -> Unit) {
-        session?.close(CloseReason(CloseReason.Codes.NORMAL, "Client closed"))
-        connectionStateListener(ConnectionState(false))
-    }
-
     suspend fun cancelTimer() {
 //        val message = json.encodeToString()
         try {
@@ -169,6 +169,16 @@ class WebSocketClient {
 
     suspend fun setCustomMode(updatedColors: List<String>) {
         val message = json.encodeToString(mapOf("customColors" to updatedColors))
+        sendSetupMessage(message)
+    }
+
+    suspend fun setRainbowStaticMode(value: Boolean) {
+        val message = json.encodeToString(mapOf("rainbowIsStatic" to value))
+        sendSetupMessage(message)
+    }
+
+    suspend fun setCommonBrightness(commonBrightness: Float) {
+        val message = json.encodeToString(mapOf("commonBrightness" to commonBrightness.toInt()))
         sendSetupMessage(message)
     }
 }

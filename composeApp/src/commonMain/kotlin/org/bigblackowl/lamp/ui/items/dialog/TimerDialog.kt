@@ -1,4 +1,4 @@
-package org.bigblackowl.lamp.ui.items
+package org.bigblackowl.lamp.ui.items.dialog
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn

@@ -1,4 +1,4 @@
-package org.bigblackowl.lamp.ui.items
+package org.bigblackowl.lamp.ui.mode
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,7 +24,7 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import org.bigblackowl.lamp.ui.theme.DefaultColorList
 
 @Composable
-fun ColorControl(
+fun ColorControlMode(
     onColorChanged: (ColorEnvelope) -> Unit,
     onColorSelected: (Color) -> Unit,
     initialColor: Color,

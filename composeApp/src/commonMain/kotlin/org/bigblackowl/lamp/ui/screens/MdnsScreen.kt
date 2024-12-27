@@ -1,13 +1,16 @@
 package org.bigblackowl.lamp.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -26,21 +29,19 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.bigblackowl.lamp.core.mdns.PlatformPermission
 import org.bigblackowl.lamp.ui.items.FoundDeviceItem
+import org.bigblackowl.lamp.ui.items.topAppBars.MdnsScreenTopAppBar
 import org.bigblackowl.lamp.ui.navigation.ScreensRoute
-import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
+import org.bigblackowl.lamp.ui.theme.SurfaceColor
 import org.bigblackowl.lamp.ui.viewmodel.MdnsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MdnsScreen(
     mdnsViewModel: MdnsViewModel,
-    ledControlViewModel: LedControlViewModel,
     navController: NavHostController,
-    paddingValues: PaddingValues,
 ) {
     PlatformPermission().RequestPermission()
     LaunchedEffect(Unit) {
@@ -49,34 +50,44 @@ fun MdnsScreen(
     }
     val devices by mdnsViewModel.devices.collectAsState()
     val state = rememberPullToRefreshState()
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp).padding(paddingValues)
-            .consumeWindowInsets(paddingValues).onKeyEvent {
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .onKeyEvent {
                 if (it.key == Key.F5 && it.type == KeyEventType.KeyDown) {
                     mdnsViewModel.startDiscovery()
                     true
                 } else false
-            }, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            "Devices on the local network:",
-            modifier = Modifier.padding(10.dp),
-            color = Color.White,
-            fontSize = 22.sp
-        )
+            },
+        topBar = {
+            MdnsScreenTopAppBar()
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    mdnsViewModel.startDiscovery()
+                },
+                modifier = Modifier.padding(bottom = 40.dp, end = 10.dp),
+                containerColor = SurfaceColor
+            ) {
+                Icon(Icons.Outlined.Refresh, null)
+            }
+        },
+        floatingActionButtonPosition = FabPosition.EndOverlay
+    ) { padding ->
         PullToRefreshBox(
             isRefreshing = devices.isEmpty(),
             onRefresh = {
                 mdnsViewModel.startDiscovery()
             },
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.padding(padding).fillMaxSize(),
             state = state,
             contentAlignment = Alignment.TopCenter,
             indicator = {
                 Indicator(
                     state = state,
                     isRefreshing = devices.isEmpty(),
+                    modifier = Modifier.size(50.dp),
                     containerColor = Color.Transparent,
                     color = Color.Cyan,
                     threshold = 60.dp
@@ -84,7 +95,7 @@ fun MdnsScreen(
             },
         ) {
             LazyColumn(
-                Modifier.fillMaxSize()
+                Modifier.padding(horizontal = 20.dp).fillMaxSize()
             ) {
                 if (devices.isNotEmpty()) {
                     items(devices.size) { index ->
@@ -108,7 +119,8 @@ fun MdnsScreen(
     DisposableEffect(navController.currentDestination?.route) {
         onDispose {
             println("mDNS DisposableEffect discovery stopped")
-            mdnsViewModel.stopDiscovery() }
+            mdnsViewModel.stopDiscovery()
+        }
     }
 }
 

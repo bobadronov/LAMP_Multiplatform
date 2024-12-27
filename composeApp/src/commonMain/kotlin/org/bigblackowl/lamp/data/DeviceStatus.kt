@@ -4,7 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeviceStatus(
+    val version: String = "",
     val ledState: Boolean = false,
+    val commonBrightness: Float = 255f,
     val NUM_LEDS: Int = 0,
     val currentMode: Int = 0,
     val color: String = "",
@@ -12,9 +14,10 @@ data class DeviceStatus(
     val humidity: Float = 0.0f,
     val modes: List<String> = emptyList(),
     val rainbowSpeed: Float = 0f,
+    val rainbowIsStatic: Boolean = false,
     val flagSpeed: Int = 1,
     val flagIsStatic: Boolean = true,
-    val timerIsActive : Boolean = false,
+    val timerIsActive: Boolean = false,
     val timer: Timer = Timer(),
 )
 
@@ -25,7 +28,7 @@ data class WiFiState(
 
 //    val version: String = "",
 //    //=======================
-//    val rainbowStatic: Boolean = false,
+//
 //    //=======================
 //    val breathSpeed: Float = 0f,
 //    val isBreathModeRainbow: Boolean = false,

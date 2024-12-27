@@ -24,7 +24,7 @@ class LedControlViewModel(
     fun connect(deviceName: String) {
         viewModelScope.launch {
             webSocketClient.connect(host = deviceName, incomingListener = { newStatus ->
-//                println("LedStripViewModel newStatus: $newStatus")
+                println("LedStripViewModel newStatus: $newStatus")
                 _deviceStatus.value = newStatus
 //                println("LedStripViewModel _deviceStatus: ${_deviceStatus.value}")
             }, connectionStateListener = { state ->
@@ -139,6 +139,26 @@ class LedControlViewModel(
         viewModelScope.launch {
             try {
                 webSocketClient.setCustomMode(updatedColors)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun setRainbowStaticMode(value: Boolean) {
+        viewModelScope.launch {
+            try {
+                webSocketClient.setRainbowStaticMode(value)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun setCommonBrightness(commonBrightness: Float) {
+        viewModelScope.launch {
+            try {
+                webSocketClient.setCommonBrightness(commonBrightness)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

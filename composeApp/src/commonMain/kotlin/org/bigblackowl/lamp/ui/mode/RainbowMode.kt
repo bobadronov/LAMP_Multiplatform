@@ -1,5 +1,6 @@
 package org.bigblackowl.lamp.ui.mode
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
@@ -14,40 +15,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FlagMode(
-    flagIsStatic: Boolean,
+fun RainbowMode(
+    speed: Float,
     commonBrightness: Float,
     onBrightnessChange: (Float) -> Unit,
     onBrightnessChangeFinished: () -> Unit,
+    rainbowIsStatic: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    flagSpeed: Float,
     onValueChange: (Float) -> Unit,
     onValueChangeFinished: () -> Unit
 ) {
     Column(
         Modifier.fillMaxWidth(.8f),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+
         Text("Static mode:", color = Color.White)
         Switch(
-            checked = flagIsStatic,
+            checked = rainbowIsStatic,
             onCheckedChange = onCheckedChange,
             modifier = Modifier.width(60.dp),
             colors = SwitchDefaults.colors()
         )
+
         Text("Speed:", color = Color.White)
         Slider(
-            value = flagSpeed,
-            enabled = !flagIsStatic,
-            valueRange = 1f..10f, // Значения диапазона
+            value = speed, valueRange = 1f..10f, // Значения диапазона
             steps = 8,
             onValueChange = onValueChange,
             onValueChangeFinished = onValueChangeFinished
         )
+
         Text("Brightness:", color = Color.White)
         Slider(
-            value = commonBrightness,
-            valueRange = 1f..255f, // Значения диапазона
+            value = commonBrightness, valueRange = 1f..255f, // Значения диапазона
 //            steps = 8,
             onValueChange = onBrightnessChange,
             onValueChangeFinished = onBrightnessChangeFinished

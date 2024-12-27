@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun LedModeDropdown(
@@ -26,7 +27,7 @@ fun LedModeDropdown(
         },
         modifier = Modifier.fillMaxWidth(.7f)
     ) {
-        Text(text = "Mode: ${modes[selectedModeIndex]}")
+        Text(text = "Mode: ${modes[selectedModeIndex]}", color = Color.Black)
         // Выпадающее меню
         DropdownMenu(
             expanded = expanded,

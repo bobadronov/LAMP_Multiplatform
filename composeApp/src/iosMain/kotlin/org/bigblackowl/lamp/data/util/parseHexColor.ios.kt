@@ -1,4 +1,4 @@
-package org.bigblackowl.lamp.data
+package org.bigblackowl.lamp.data.util
 
 import androidx.compose.ui.graphics.Color
 
