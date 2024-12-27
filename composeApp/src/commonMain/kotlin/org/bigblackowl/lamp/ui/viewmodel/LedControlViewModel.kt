@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import org.bigblackowl.lamp.core.network.WebSocketClient
 import org.bigblackowl.lamp.data.ConnectionState
 import org.bigblackowl.lamp.data.DeviceStatus
+import org.bigblackowl.lamp.data.ErrorStatus
 import org.bigblackowl.lamp.data.SetupEspCredential
 import org.bigblackowl.lamp.data.Timer
 
@@ -20,17 +21,26 @@ class LedControlViewModel(
     private val _deviceStatus = MutableStateFlow(DeviceStatus())
     val deviceStatus: StateFlow<DeviceStatus> = _deviceStatus
 
+    private val _timerError = MutableStateFlow(ErrorStatus())
+    val timerError: StateFlow<ErrorStatus> = _timerError
 
     fun connect(deviceName: String) {
         viewModelScope.launch {
-            webSocketClient.connect(host = deviceName, incomingListener = { newStatus ->
-                println("LedStripViewModel newStatus: $newStatus")
-                _deviceStatus.value = newStatus
-//                println("LedStripViewModel _deviceStatus: ${_deviceStatus.value}")
-            }, connectionStateListener = { state ->
-//                println("LedStripViewModel connectionStateListener: $state")
-                _connectionConnectionState.value = state
-            })
+            webSocketClient.connect(
+                host = deviceName,
+                incomingListener = { newStatus ->
+                  println("LedStripViewModel newStatus: $newStatus")
+                    _deviceStatus.value = newStatus
+//                  println("LedStripViewModel _deviceStatus: ${_deviceStatus.value}")
+                },
+                connectionStateListener = { state ->
+//                  println("LedStripViewModel connectionStateListener: $state")
+                    _connectionConnectionState.value = state
+                },
+                errorListener = { status ->
+                    _timerError.value = status
+                }
+            )
         }
     }
 
@@ -45,7 +55,7 @@ class LedControlViewModel(
     }
 
     fun setColor(hexCode: String) {
-        println("LedStripViewModel setColor hexCode: $hexCode")
+//        println("LedStripViewModel setColor hexCode: $hexCode")
         viewModelScope.launch {
             try {
                 webSocketClient.sendColor(hexCode)
@@ -169,6 +179,36 @@ class LedControlViewModel(
         viewModelScope.launch {
             try {
                 webSocketClient.reboot()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun setLedCount(value: Int) {
+        viewModelScope.launch {
+            try {
+                webSocketClient.setLedCount(value)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun setGradient(list: List<String>) {
+        viewModelScope.launch {
+            try {
+                webSocketClient.setGradient(list)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun setBreathingSpeed(breathingSpeed: Float) {
+        viewModelScope.launch {
+            try {
+                webSocketClient.setBreathingSpeed(breathingSpeed)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

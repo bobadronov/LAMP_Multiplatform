@@ -51,7 +51,7 @@ fun InfoDialog(
 
                 // Состояние светодиодов
                 TextRow(label = "LED State", value = deviceStatus.ledState.toString())
-                TextRow(label = "Number of LEDs", value = deviceStatus.NUM_LEDS.toString())
+                TextRow(label = "Number of LEDs", value = deviceStatus.REAL_NUM_LEDS.toString())
 
                 // Таймер
                 TextRow(label = "Timer Active", value = deviceStatus.timerIsActive.toString())

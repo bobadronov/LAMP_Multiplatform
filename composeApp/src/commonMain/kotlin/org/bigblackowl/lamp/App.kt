@@ -8,18 +8,18 @@ import org.bigblackowl.lamp.ui.navigation.SystemNavigation
 import org.bigblackowl.lamp.ui.theme.LampTheme
 import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
 import org.bigblackowl.lamp.ui.viewmodel.MdnsViewModel
-import org.bigblackowl.lamp.ui.viewmodel.SetupDeviceViewModel
+import org.bigblackowl.lamp.ui.viewmodel.WifiViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App(
     ledControlViewModel: LedControlViewModel = koinViewModel(),
     mdnsViewModel: MdnsViewModel = koinViewModel(),
-    setupDeviceViewModel: SetupDeviceViewModel = koinViewModel()
+    wifiViewModel: WifiViewModel = koinViewModel()
 ) {
     LampTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-            SystemNavigation(ledControlViewModel, mdnsViewModel, setupDeviceViewModel, paddingValues)
+            SystemNavigation(ledControlViewModel, mdnsViewModel, wifiViewModel, paddingValues)
         }
     }
 }

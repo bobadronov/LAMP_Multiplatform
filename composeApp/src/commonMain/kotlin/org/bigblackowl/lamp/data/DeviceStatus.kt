@@ -7,12 +7,14 @@ data class DeviceStatus(
     val version: String = "",
     val ledState: Boolean = false,
     val commonBrightness: Float = 255f,
-    val NUM_LEDS: Int = 0,
+    val breathingSpeed: Float = 255f,
+    val REAL_NUM_LEDS: Int = 10,
     val currentMode: Int = 0,
     val color: String = "",
     val temperature: Float = 0.0f,
     val humidity: Float = 0.0f,
     val modes: List<String> = emptyList(),
+    val customColorsArray: List<String> = emptyList(),
     val rainbowSpeed: Float = 0f,
     val rainbowIsStatic: Boolean = false,
     val flagSpeed: Int = 1,
@@ -20,7 +22,10 @@ data class DeviceStatus(
     val timerIsActive: Boolean = false,
     val timer: Timer = Timer(),
 )
-
+@Serializable
+data class ErrorStatus(
+    val message: String? = null
+)
 data class WiFiState(
     val isOn: Boolean = false,
     val isConnected: Boolean = false

@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -112,14 +113,14 @@ fun ControlScreenTopAppBar(
 
                         DropdownMenuItem(
                             text = {
-                                Text("Setup WiFi")
+                                Text("Setup")
                             },
                             onClick = {
                                 navController.navigate(ScreensRoute.SetupESPScreen.route)
                             },
                             trailingIcon = {
                                 Icon(
-                                    painterResource(Res.drawable.wifi),
+                                    Icons.Default.Settings,
                                     contentDescription = null,
                                     modifier = Modifier.size(35.dp),
                                     tint = Color.Gray,

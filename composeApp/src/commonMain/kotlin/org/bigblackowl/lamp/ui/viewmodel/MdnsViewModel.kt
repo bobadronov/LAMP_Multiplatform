@@ -20,7 +20,7 @@ class MdnsViewModel(
         stopDiscovery()
         viewModelScope.launch {
             try {
-                println("Starting mDNS discovery...")
+//                println("Starting mDNS discovery...")
                 mdnsService.startDiscovery(serviceType = "_http._tcp") { event ->
                     when (event) {
                         is DiscoveryEvent.Discovered, is DiscoveryEvent.Resolved -> {
@@ -28,7 +28,7 @@ class MdnsViewModel(
                                 name = event.service.name,
                                 ipAddress = event.service.host,
                             )
-                            println("Discovered , Resolved $device")
+//                            println("MdnsViewModel Discovered $device")
                             addOrUpdateDevice(device)
                         }
 
@@ -37,7 +37,7 @@ class MdnsViewModel(
                                 name = event.service.name,
                                 ipAddress = event.service.host,
                             )
-                            println("Removed $device")
+//                            println("MdnsViewModel Removed $device")
                             removeDevice(device)
                         }
                     }
@@ -53,7 +53,7 @@ class MdnsViewModel(
             try {
                 _devices.value = emptyList()
                 mdnsService.stopDiscovery()
-                println("mDNS discovery stopped")
+//                println("mDNS discovery stopped")
             } catch (e: Exception) {
                 println("Error stopping mDNS discovery: ${e.message}")
             }

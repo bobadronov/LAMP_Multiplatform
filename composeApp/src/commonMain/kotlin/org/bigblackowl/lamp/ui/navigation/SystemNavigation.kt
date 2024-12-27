@@ -18,13 +18,13 @@ import org.bigblackowl.lamp.ui.screens.MdnsScreen
 import org.bigblackowl.lamp.ui.screens.SetupESPScreen
 import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
 import org.bigblackowl.lamp.ui.viewmodel.MdnsViewModel
-import org.bigblackowl.lamp.ui.viewmodel.SetupDeviceViewModel
+import org.bigblackowl.lamp.ui.viewmodel.WifiViewModel
 
 @Composable
 fun SystemNavigation(
     ledControlViewModel: LedControlViewModel,
     mdnsViewModel: MdnsViewModel,
-    setupDeviceViewModel: SetupDeviceViewModel,
+    wifiViewModel: WifiViewModel,
     paddingValues: PaddingValues
 ) {
     val navController = rememberNavController()
@@ -48,7 +48,7 @@ fun SystemNavigation(
         }
 
         composable(route = ScreensRoute.SetupESPScreen.route) {
-            SetupESPScreen(ledControlViewModel, setupDeviceViewModel, navController)
+            SetupESPScreen(ledControlViewModel, wifiViewModel, navController)
         }
     }
 }

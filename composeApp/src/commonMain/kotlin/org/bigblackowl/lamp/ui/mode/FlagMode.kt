@@ -21,8 +21,8 @@ fun FlagMode(
     onBrightnessChangeFinished: () -> Unit,
     onCheckedChange: (Boolean) -> Unit,
     flagSpeed: Float,
-    onValueChange: (Float) -> Unit,
-    onValueChangeFinished: () -> Unit
+    onSpeedChange: (Float) -> Unit,
+    onSpeedChangeFinished: () -> Unit
 ) {
     Column(
         Modifier.fillMaxWidth(.8f),
@@ -41,8 +41,8 @@ fun FlagMode(
             enabled = !flagIsStatic,
             valueRange = 1f..10f, // Значения диапазона
             steps = 8,
-            onValueChange = onValueChange,
-            onValueChangeFinished = onValueChangeFinished
+            onValueChange = onSpeedChange,
+            onValueChangeFinished = onSpeedChangeFinished
         )
         Text("Brightness:", color = Color.White)
         Slider(

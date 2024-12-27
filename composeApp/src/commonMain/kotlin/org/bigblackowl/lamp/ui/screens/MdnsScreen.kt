@@ -103,6 +103,7 @@ fun MdnsScreen(
                             deviceName = devices[index].name,
                             ip = devices[index].ipAddress,
                             onClick = {
+                                println("MdnsScreen FoundDeviceItem clicked -> ${devices[index].name}")
                                 navController.navigate(
                                     ScreensRoute.ControlScreensRoute.createRoute(
                                         devices[index].name
