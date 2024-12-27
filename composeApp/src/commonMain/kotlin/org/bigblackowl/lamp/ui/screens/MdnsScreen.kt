@@ -24,24 +24,28 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.bigblackowl.lamp.core.mdns.PlatformPermission
 import org.bigblackowl.lamp.ui.items.FoundDeviceItem
 import org.bigblackowl.lamp.ui.navigation.ScreensRoute
+import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
 import org.bigblackowl.lamp.ui.viewmodel.MdnsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MdnsScreen(
     mdnsViewModel: MdnsViewModel,
+    ledControlViewModel: LedControlViewModel,
     navController: NavHostController,
     paddingValues: PaddingValues,
 ) {
     PlatformPermission().RequestPermission()
     LaunchedEffect(Unit) {
         mdnsViewModel.startDiscovery()
+        println(Locale.current.language)
     }
     val devices by mdnsViewModel.devices.collectAsState()
     val state = rememberPullToRefreshState()
@@ -84,7 +88,8 @@ fun MdnsScreen(
             ) {
                 if (devices.isNotEmpty()) {
                     items(devices.size) { index ->
-                        FoundDeviceItem(deviceName = devices[index].name,
+                        FoundDeviceItem(
+                            deviceName = devices[index].name,
                             ip = devices[index].ipAddress,
                             onClick = {
                                 navController.navigate(
@@ -92,12 +97,11 @@ fun MdnsScreen(
                                         devices[index].name
                                     )
                                 )
-                            })
-
+                            }
+                        )
                     }
                 }
             }
-
         }
     }
 

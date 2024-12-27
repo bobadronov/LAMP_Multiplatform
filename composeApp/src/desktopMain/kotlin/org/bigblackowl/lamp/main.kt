@@ -12,7 +12,7 @@ import org.jetbrains.compose.resources.painterResource
 
 fun main() = application {
     initKoin()
-    val state = rememberWindowState(size = DpSize(600.dp, 800.dp))
+    val state = rememberWindowState(size = DpSize(700.dp, 950.dp))
     Window(
         onCloseRequest = ::exitApplication,
         state = state,

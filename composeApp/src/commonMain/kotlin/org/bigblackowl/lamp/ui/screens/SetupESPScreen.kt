@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -29,18 +30,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import org.bigblackowl.lamp.core.mdns.PlatformPermission
+import lamp_multiplatform.composeapp.generated.resources.Res
+import lamp_multiplatform.composeapp.generated.resources.eye_off
+import lamp_multiplatform.composeapp.generated.resources.eye_show
 import org.bigblackowl.lamp.data.SetupEspCredential
 import org.bigblackowl.lamp.ui.navigation.ScreensRoute
 import org.bigblackowl.lamp.ui.theme.neonTextFieldColors
 import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
 import org.bigblackowl.lamp.ui.viewmodel.SetupDeviceViewModel
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,14 +61,15 @@ fun SetupESPScreen(
     var ssid by remember { mutableStateOf(TextFieldValue("")) }
     var pass by remember { mutableStateOf(TextFieldValue("")) }
     var deviceName by remember { mutableStateOf(TextFieldValue("ESP_LED")) }
-
+    var showPass by remember { mutableStateOf(false) }
     val networks by setupDeviceViewModel.wifiNetworks.collectAsState()
     val connectionState by ledControlViewModel.connectionState.collectAsState()
     var expanded by remember { mutableStateOf(false) } // State for DropdownMenu
-    PlatformPermission().RequestPermission()
     LaunchedEffect(Unit) {
         setupDeviceViewModel.loadNetworks()
     }
+    val focusManager = LocalFocusManager.current // To manage focus transitions
+    val keyboardController = LocalSoftwareKeyboardController.current // For controlling the keyboard
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -87,8 +96,9 @@ fun SetupESPScreen(
                 if (connectionState.state) {
                     Text(
                         "Device is " + if (connectionState.state) "online" else "offline",
+                        modifier = Modifier.padding(end = 15.dp),
                         color = if (connectionState.state) Color.Green else Color.Red,
-                        fontSize = 16.sp
+//                        fontSize = 16.sp
                     )
                 }
             })
@@ -105,8 +115,13 @@ fun SetupESPScreen(
                 onValueChange = {
                     ssid = it
                 },
+                isError = ssid.text.isBlank() || ssid.text.length < 2,
                 label = { Text("SSID") },
-                readOnly = true, // Prevent manual input
+                readOnly = false, // Prevent manual input
+                singleLine = true,
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.moveFocus(FocusDirection.Down) }
+                ),
                 trailingIcon = {
                     IconButton(onClick = { expanded = true }) {
                         Icon(Icons.Default.ArrowDropDown, contentDescription = "Select Network")
@@ -136,7 +151,22 @@ fun SetupESPScreen(
                 value = pass,
                 onValueChange = { pass = it }, // Update pass when text changes
                 label = { Text("Password") },
-                visualTransformation = PasswordVisualTransformation(), // Optional, for password masking
+                singleLine = true,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus() // Clear focus to hide the keyboard
+                        keyboardController?.hide() // Explicitly hide the keyboard
+                    }
+                ),
+                trailingIcon = {
+                    IconButton(onClick = { showPass = !showPass }) {
+                        Icon(
+                            painterResource(if (showPass) Res.drawable.eye_off else Res.drawable.eye_show),
+                            contentDescription = null
+                        )
+                    }
+                },
+                visualTransformation = if (showPass) VisualTransformation.None else PasswordVisualTransformation(), // Optional, for password masking
                 isError = pass.text.isBlank() || pass.text.length < 8,
                 colors = neonTextFieldColors
             )
@@ -156,16 +186,18 @@ fun SetupESPScreen(
             )
             Spacer(Modifier.height(100.dp))
             if (connectionState.state && pass.text.isNotBlank() && pass.text.length >= 8 && ssid.text.isNotBlank() && ssid.text.length >= 2) {
-                Button(onClick = {
-                    ledControlViewModel.setupESP(
-                        SetupEspCredential(
-                            ssid = ssid.text, password = pass.text, deviceName = deviceName.text
+                Button(
+                    onClick = {
+                        ledControlViewModel.setupESP(
+                            SetupEspCredential(
+                                ssid = ssid.text, password = pass.text, deviceName = deviceName.text
+                            )
                         )
-                    )
-                    navController.navigate(ScreensRoute.MdnsScreensRoute) {
-                        popUpTo(0) { inclusive = true } // Очищает весь back stack
+                        navController.navigate(ScreensRoute.MdnsScreensRoute.route) {
+                            popUpTo(0) { inclusive = true } // Очищает весь back stack
+                        }
                     }
-                }) {
+                ) {
                     Text("Setup Wifi")
                 }
             } else {

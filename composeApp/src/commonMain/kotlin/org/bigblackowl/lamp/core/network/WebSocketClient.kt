@@ -167,5 +167,8 @@ class WebSocketClient {
         }
     }
 
-
+    suspend fun setCustomMode(updatedColors: List<String>) {
+        val message = json.encodeToString(mapOf("customColors" to updatedColors))
+        sendSetupMessage(message)
+    }
 }

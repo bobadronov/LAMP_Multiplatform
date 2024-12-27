@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DeviceStatus(
     val ledState: Boolean = false,
+    val NUM_LEDS: Int = 0,
     val currentMode: Int = 0,
     val color: String = "",
     val temperature: Float = 0.0f,
@@ -22,7 +23,6 @@ data class WiFiState(
     val isConnected: Boolean = false
 )
 
-//    val NUM_LEDS: Int = 0,
 //    val version: String = "",
 //    //=======================
 //    val rainbowStatic: Boolean = false,

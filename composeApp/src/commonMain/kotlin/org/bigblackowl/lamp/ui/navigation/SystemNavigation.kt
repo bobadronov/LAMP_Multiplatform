@@ -36,7 +36,7 @@ fun SystemNavigation(
     ) {
         //HOME
         composable(route = ScreensRoute.MdnsScreensRoute.route) {
-            MdnsScreen(mdnsViewModel, navController, paddingValues)
+            MdnsScreen(mdnsViewModel, ledControlViewModel, navController, paddingValues)
         }
 
         composable(

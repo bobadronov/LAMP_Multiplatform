@@ -24,7 +24,7 @@ fun LedModeDropdown(
         onClick = {
             expanded = true
         },
-        modifier = Modifier.fillMaxWidth(.5f)
+        modifier = Modifier.fillMaxWidth(.7f)
     ) {
         Text(text = "Mode: ${modes[selectedModeIndex]}")
         // Выпадающее меню

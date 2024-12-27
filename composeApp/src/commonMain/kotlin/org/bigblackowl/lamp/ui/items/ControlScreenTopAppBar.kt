@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,19 +17,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import lamp_multiplatform.composeapp.generated.resources.Res
 import lamp_multiplatform.composeapp.generated.resources.on_button
+import lamp_multiplatform.composeapp.generated.resources.wifi
 import org.bigblackowl.lamp.data.ConnectionState
 import org.bigblackowl.lamp.ui.navigation.ScreensRoute
-import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ControlScreenTopAppBar(
-    viewModel: LedControlViewModel,
-    connectionState: ConnectionState,
     deviceName: String,
+    connectionState: ConnectionState,
     ledState: Boolean,
-    navController: NavHostController
+    navController: NavHostController,
+    offLedClicked: () -> Unit,
 ) {
     TopAppBar(
         colors = TopAppBarColors(
@@ -52,35 +51,41 @@ fun ControlScreenTopAppBar(
             }) {
                 Icon(
                     Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.size(35.dp),
                 )
             }
         },
         actions = {
             if (connectionState.state && ledState) {
-                IconButton(onClick = {
-                    viewModel.setLedState(false)
-                }, modifier = Modifier.padding(end = 20.dp)) {
+                IconButton(
+                    onClick = offLedClicked,
+                    modifier = Modifier.padding(end = 15.dp)
+                ) {
                     Icon(
                         painterResource(Res.drawable.on_button),
                         contentDescription = null,
-                        modifier = Modifier.size(30.dp),
+                        modifier = Modifier.size(35.dp),
                         tint = Color.Red,
                     )
                 }
             }
             Text(
                 if (connectionState.state) "Online" else "Offline",
-                color = if (connectionState.state) Color.Green else Color.Red
+                modifier = Modifier.padding(end = 15.dp),
+                color = if (connectionState.state) Color.Green else Color.Red,
             )
             if (connectionState.state) {
-                IconButton(onClick = {
-                    navController.navigate(ScreensRoute.SetupESPScreen.route)
-                }) {
+                IconButton(
+                    onClick = {
+                        navController.navigate(ScreensRoute.SetupESPScreen.route)
+                    },
+                ) {
                     Icon(
-                        Icons.Default.Settings,
+                        painterResource(Res.drawable.wifi),
                         contentDescription = null,
-                        tint = Color.Gray
+                        modifier = Modifier.size(35.dp),
+                        tint = Color.Gray,
                     )
                 }
             }

@@ -67,12 +67,14 @@ fun ColorControl(
                             shape = RoundedCornerShape(10.dp)
                         )  // Apply rounded corners
                         .border(
-                            1.dp,
-                            color = if (initialColor == DefaultColorList[index]) Color.Black else Color.Unspecified,
-                            shape = RoundedCornerShape(8.dp)
+                            2.dp,
+                            color = if (initialColor == DefaultColorList[index]) Color.White else Color.Unspecified,
+                            shape = RoundedCornerShape(10.dp)
                         )
                 )
             }
         }
     }
 }
+
+

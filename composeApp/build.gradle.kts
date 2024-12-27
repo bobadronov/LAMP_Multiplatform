@@ -93,7 +93,7 @@ kotlin {
 android {
     namespace = "org.bigblackowl.lamp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-
+    description = "BigBlackOwl"
     defaultConfig {
         applicationId = "org.bigblackowl.lamp"
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -131,7 +131,10 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ESP_LAMP_Multiplatform"
-            packageVersion = "1.0.0"
+
+            description = "BigBlackOwl"
+
+            packageVersion = "1.0.1"
         }
     }
 }

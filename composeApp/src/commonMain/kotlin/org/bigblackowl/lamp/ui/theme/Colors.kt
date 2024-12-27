@@ -14,8 +14,16 @@ val DefaultColorList = listOf(
     Color.Yellow,
     Color.Cyan,
     Color.Magenta,
-    Color(0xFF7700b3)
+    Color(0xFF7700b3),
+    Color(0xFFff5722),  // Orange
+    Color(0xFF8bc34a),  // Light Green
+    Color(0xFF009688),  // Teal
+    Color(0xFF3f51b5),  // Indigo
+    Color(0xFFFF9800),  // Amber
+    Color(0xFF2196F3),  // Light Blue
+    Color(0xffb023ff)
 )
+
 
 val DarkBackground = Color(0xff171717)
 val LightBackground = Color(0xffcacaca)

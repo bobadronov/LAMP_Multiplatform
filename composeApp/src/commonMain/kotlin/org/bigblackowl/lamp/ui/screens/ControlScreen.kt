@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import lamp_multiplatform.composeapp.generated.resources.Res
 import lamp_multiplatform.composeapp.generated.resources.on_button
 import org.bigblackowl.lamp.data.parseHexColor
@@ -42,6 +46,7 @@ import org.bigblackowl.lamp.ui.items.LedModeDropdown
 import org.bigblackowl.lamp.ui.items.ProgressIndicator
 import org.bigblackowl.lamp.ui.items.SliderMode
 import org.bigblackowl.lamp.ui.items.TimerDialog
+import org.bigblackowl.lamp.ui.mode.CustomMode
 import org.bigblackowl.lamp.ui.mode.FlagMode
 import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
 import org.jetbrains.compose.resources.painterResource
@@ -64,20 +69,33 @@ fun ControlScreen(
     var color by remember { (mutableStateOf(Color.White)) }
     var flagSpeed by remember { mutableStateOf(1f) }
     var rainbowSpeed by remember { mutableStateOf(1f) }
-    LaunchedEffect(deviceStatus.ledState, deviceStatus.color) {
+
+    LaunchedEffect(deviceStatus) {
         ledState = deviceStatus.ledState
         color = parseHexColor(deviceStatus.color)
         flagSpeed = deviceStatus.flagSpeed.toFloat()
         rainbowSpeed = deviceStatus.rainbowSpeed
     }
+
     val controller = rememberColorPickerController()
     controller.debounceDuration = 800L
-//    val scope = rememberCoroutineScope()
-    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        ControlScreenTopAppBar(
-            ledControlViewModel, connectionState, deviceName, ledState, navController
-        )
-    }) { newPadding ->
+
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            ControlScreenTopAppBar(
+                deviceName = deviceName,
+                connectionState = connectionState,
+                ledState = ledState,
+                navController = navController,
+                offLedClicked = {
+                    ledControlViewModel.setLedState(false)
+                }
+            )
+        }
+    ) { newPadding ->
 
         if (connectionState.state) {
             AnimatedVisibility(
@@ -86,7 +104,7 @@ fun ControlScreen(
                 exit = fadeOut(),
             ) {
                 Column(
-                    Modifier.padding(newPadding).fillMaxSize(),
+                    Modifier.padding(newPadding).fillMaxSize().padding(vertical = 20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -127,6 +145,16 @@ fun ControlScreen(
                             }, onValueChangeFinished = {
                                 ledControlViewModel.setFlagSpeed(flagSpeed.roundToInt())
                             })
+                        }
+
+                        10 -> {
+                            CustomMode(
+                                numLeds = deviceStatus.NUM_LEDS,
+                                onValueChange = { updatedColors ->
+                                    println("ControlScreen Updated Colors: $updatedColors")
+                                    ledControlViewModel.setCustomMode(updatedColors)
+                                }
+                            )
                         }
 
                         else -> {}
@@ -178,6 +206,7 @@ fun ControlScreen(
                     }
                 }
             }
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -188,27 +217,30 @@ fun ControlScreen(
                     enter = fadeIn(),
                     exit = fadeOut(),
                 ) {
-                    IconButton(onClick = {
-                        ledControlViewModel.setLedState(true)
-                    }) {
+                    IconButton(
+                        onClick = {
+                            ledControlViewModel.setLedState(true)
+                        },
+                        modifier = Modifier.size(160.dp),
+                    ) {
                         Icon(
                             painterResource(Res.drawable.on_button),
                             contentDescription = null,
-                            tint = Color.Green
+                            modifier = Modifier.size(150.dp),
+                            tint = Color.Green,
                         )
                     }
                 }
             }
         } else {
             ProgressIndicator(Modifier.fillMaxSize())
-//                scope.launch {
-//                    delay(4000)
-//                    println("Reconnect to device")
-//                    ledControlViewModel.connect(deviceName)
-//                    delay(4000)
-//                    if (!connectionState.state) navController.popBackStack()
-//                }
-
+                scope.launch {
+                    delay(4000)
+                    println("Reconnect to device")
+                    ledControlViewModel.connect(deviceName)
+                    delay(4000)
+                    if (!connectionState.state) navController.popBackStack()
+                }
         }
     }
 

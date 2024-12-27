@@ -24,11 +24,11 @@ class LedControlViewModel(
     fun connect(deviceName: String) {
         viewModelScope.launch {
             webSocketClient.connect(host = deviceName, incomingListener = { newStatus ->
-                println("LedStripViewModel newStatus: $newStatus")
+//                println("LedStripViewModel newStatus: $newStatus")
                 _deviceStatus.value = newStatus
-                println("LedStripViewModel _deviceStatus: ${_deviceStatus.value}")
+//                println("LedStripViewModel _deviceStatus: ${_deviceStatus.value}")
             }, connectionStateListener = { state ->
-                println("LedStripViewModel connectionStateListener: $state")
+//                println("LedStripViewModel connectionStateListener: $state")
                 _connectionConnectionState.value = state
             })
         }
@@ -65,7 +65,7 @@ class LedControlViewModel(
     }
 
     fun setupESP(setupEspCredential: SetupEspCredential) {
-        println("LedStripViewModel setupWifi: $setupEspCredential")
+//        println("LedStripViewModel setupWifi: $setupEspCredential")
         viewModelScope.launch {
             try {
                 webSocketClient.setupESP(setupEspCredential)
@@ -129,6 +129,16 @@ class LedControlViewModel(
         viewModelScope.launch {
             try {
                 webSocketClient.cancelTimer()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun setCustomMode(updatedColors: List<String>) {
+        viewModelScope.launch {
+            try {
+                webSocketClient.setCustomMode(updatedColors)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
