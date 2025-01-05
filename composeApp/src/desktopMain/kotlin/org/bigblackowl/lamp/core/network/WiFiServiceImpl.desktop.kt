@@ -8,7 +8,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-actual class WiFiServiceImpl() : WiFiService {
+actual class WiFiServiceImpl : WiFiService {
+
     // StateFlow to hold available networks
     private val _availableNetworks = MutableStateFlow<List<WiFiNetwork>>(emptyList())
     actual override val availableNetworks: StateFlow<List<WiFiNetwork>> = _availableNetworks
@@ -37,4 +38,5 @@ actual class WiFiServiceImpl() : WiFiService {
 
         return networks
     }
+
 }

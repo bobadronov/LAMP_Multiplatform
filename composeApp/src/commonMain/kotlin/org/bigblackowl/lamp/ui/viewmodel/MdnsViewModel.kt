@@ -13,6 +13,7 @@ class MdnsViewModel(
     private val mdnsService: MdnsService
 ) : ViewModel() {
 
+
     private val _devices = MutableStateFlow<List<MdnsDevice>>(emptyList())
     val devices: StateFlow<List<MdnsDevice>> = _devices
 

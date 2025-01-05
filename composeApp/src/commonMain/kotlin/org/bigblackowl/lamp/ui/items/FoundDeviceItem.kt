@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun FoundDeviceItem(deviceName: String, ip: String?, onClick: () -> Unit) {
+
     Card(
         modifier = Modifier.fillMaxWidth().padding(vertical = 15.dp),
         shape = RoundedCornerShape(25.dp),

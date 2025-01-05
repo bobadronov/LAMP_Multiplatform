@@ -24,6 +24,7 @@ fun FlagMode(
     onSpeedChange: (Float) -> Unit,
     onSpeedChangeFinished: () -> Unit
 ) {
+
     Column(
         Modifier.fillMaxWidth(.8f),
         horizontalAlignment = Alignment.CenterHorizontally

@@ -46,9 +46,10 @@ fun CustomMode(
     onBrightnessChange: (Float) -> Unit,
     onBrightnessChangeFinished: () -> Unit,
 ) {
+
     var selectedColor by remember { mutableStateOf(Color.Black) }
     var ledColors by remember { mutableStateOf(List(10) { "#000000" }) }
-    val squareSize = 50.dp
+    val squareSize = 35.dp
 
     LaunchedEffect(colorList) {
         ledColors = colorList

@@ -6,5 +6,4 @@ sealed class ScreensRoute(val route: String) {
         fun createRoute(deviceName: String) = "ControlScreen/$deviceName"
     }
     data object SetupESPScreen: ScreensRoute("WifiSetupScreen")
-
 }

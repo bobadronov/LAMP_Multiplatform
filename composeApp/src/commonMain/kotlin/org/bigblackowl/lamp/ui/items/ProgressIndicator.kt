@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ProgressIndicator(modifier: Modifier = Modifier) {
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,

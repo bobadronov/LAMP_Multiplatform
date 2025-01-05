@@ -13,6 +13,7 @@ fun Int.toHexString(): String {
     }.toString().uppercase()
 }
 
+
 // Extension function for Color to get Hex string
 fun Color.toHexString(): String {
     return this.toArgb().toHexString()

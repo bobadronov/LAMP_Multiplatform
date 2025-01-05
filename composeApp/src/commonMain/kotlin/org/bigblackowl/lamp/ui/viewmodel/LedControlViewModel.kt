@@ -16,33 +16,49 @@ import org.bigblackowl.lamp.data.Timer
 class LedControlViewModel(
     private val webSocketClient: WebSocketClient,
 ) : ViewModel() {
+
     private val _connectionConnectionState = MutableStateFlow(ConnectionState(state = false))
     val connectionState: StateFlow<ConnectionState> = _connectionConnectionState
 
     private val _errorMessage = MutableStateFlow(ErrorStatus())
     val errorMessage: StateFlow<ErrorStatus> = _errorMessage
 
+
     private val _deviceStatus = MutableStateFlow(DeviceStatus())
     val deviceStatus: StateFlow<DeviceStatus> = _deviceStatus
+
+    private val _update = MutableStateFlow(false)  // Исправлено, теперь начальное значение false
+
+    private fun checkConnection() {
+        viewModelScope.launch {
+            while (_update.value) {  // Цикл будет продолжаться, пока _update.value == true
+                webSocketClient.checkConnection() // Проверка соединения
+                delay(10000) // Добавляем задержку, чтобы избежать перегрузки
+            }
+        }
+    }
 
     fun connect(deviceName: String) {
         viewModelScope.launch {
             webSocketClient.connect(
                 host = deviceName,
                 incomingListener = { newStatus ->
-                    println("LedStripViewModel newStatus: $newStatus")
-
+//                    println("LedStripViewModel newStatus: $newStatus")
                     // Обработка нового статуса
                     val updatedStatus = parseAndMergeStatus(newStatus, _deviceStatus.value)
                     _deviceStatus.value = updatedStatus
+                    _update.value = true
                 },
                 connectionStateListener = { state ->
                     _connectionConnectionState.value = state
+                    _update.value = state.state
                 },
                 errorListener = { status ->
                     _errorMessage.value = status
+                    _update.value = false
                 }
             )
+            checkConnection()
         }
     }
 
@@ -114,20 +130,11 @@ class LedControlViewModel(
         }
     }
 
-    fun setFlagSpeed(flagSpeed: Int) {
-        viewModelScope.launch {
-            try {
-                webSocketClient.setFlagSpeed(flagSpeed)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
-    fun setRainbowSpeed(rainbowSpeed: Float) {
+    fun setAnimationSpeed(rainbowSpeed: Float) {
         viewModelScope.launch {
             try {
-                webSocketClient.setRainbowSpeed(rainbowSpeed)
+                webSocketClient.setAnimationSpeed(rainbowSpeed)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -213,16 +220,6 @@ class LedControlViewModel(
             }
         }
     }
-
-    fun setFadeSpeed(fadeSpeed: Float) {
-        viewModelScope.launch {
-            try {
-                webSocketClient.setFadeSpeed(fadeSpeed)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 }
 
 // Функция для объединения нового статуса с текущим
@@ -238,21 +235,19 @@ private fun parseAndMergeStatus(
         version = newStatus.version.ifEmpty { currentStatus.version },
         ledState = newStatus.ledState,
         commonBrightness = newStatus.commonBrightness,
-        fadeSpeed = newStatus.fadeSpeed,
+        animationSpeed = newStatus.animationSpeed,
         REAL_NUM_LEDS = newStatus.REAL_NUM_LEDS,
         currentMode = newStatus.currentMode,
         color = newStatus.color.ifEmpty { currentStatus.color },
         gradientStart = newStatus.gradientStart.ifEmpty { currentStatus.gradientStart },
         gradientEnd = newStatus.gradientEnd.ifEmpty { currentStatus.gradientEnd },
-        color1 = newStatus.color1.ifEmpty { currentStatus.color1 },
-        color2 = newStatus.color2.ifEmpty { currentStatus.color2 },
+        fadeColor1 = newStatus.fadeColor1.ifEmpty { currentStatus.fadeColor1 },
+        fadeColor2 = newStatus.fadeColor2.ifEmpty { currentStatus.fadeColor2 },
         temperature = if (newStatus.temperature != 0.0f) newStatus.temperature else currentStatus.temperature,
         humidity = if (newStatus.humidity != 0.0f) newStatus.humidity else currentStatus.humidity,
         modes = newStatus.modes.ifEmpty { currentStatus.modes },
         customColorsArray = newStatus.customColorsArray.ifEmpty { currentStatus.customColorsArray },
-        rainbowSpeed = newStatus.rainbowSpeed,
         rainbowIsStatic = newStatus.rainbowIsStatic,
-        flagSpeed = newStatus.flagSpeed,
         flagIsStatic = newStatus.flagIsStatic,
         timerIsActive = newStatus.timerIsActive,
         timer = newStatus.timer

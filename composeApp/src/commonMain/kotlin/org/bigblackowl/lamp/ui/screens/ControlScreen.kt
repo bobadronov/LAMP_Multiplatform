@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -51,13 +50,16 @@ import org.bigblackowl.lamp.ui.items.dialog.TimerDialog
 import org.bigblackowl.lamp.ui.items.topAppBars.ControlScreenTopAppBar
 import org.bigblackowl.lamp.ui.mode.ColorControlMode
 import org.bigblackowl.lamp.ui.mode.CustomMode
+import org.bigblackowl.lamp.ui.mode.Fade1Mode
+import org.bigblackowl.lamp.ui.mode.Fade2Mode
 import org.bigblackowl.lamp.ui.mode.FireMode
 import org.bigblackowl.lamp.ui.mode.FlagMode
 import org.bigblackowl.lamp.ui.mode.GradientMode
 import org.bigblackowl.lamp.ui.mode.RainbowMode
+import org.bigblackowl.lamp.ui.mode.RunningLightsMode
+import org.bigblackowl.lamp.ui.mode.SparkleMode
 import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
 import org.jetbrains.compose.resources.painterResource
-import kotlin.math.roundToInt
 
 
 @Composable
@@ -75,10 +77,8 @@ fun ControlScreen(
     var isTimerWindowOpen by remember { mutableStateOf(false) }
     var ledState by remember { mutableStateOf(false) }
     var color by remember { (mutableStateOf(Color.White)) }
-    var flagSpeed by remember { mutableStateOf(1f) }
-    var rainbowSpeed by remember { mutableStateOf(1f) }
+    var animationSpeed by remember { mutableStateOf(1f) }
     var commonBrightness by remember { mutableStateOf(255f) }
-    var fadeSpeed by remember { mutableStateOf(255f) }
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
     val controller = rememberColorPickerController()
@@ -88,10 +88,8 @@ fun ControlScreen(
     LaunchedEffect(deviceStatus) {
         ledState = deviceStatus.ledState
         color = parseHexColor(deviceStatus.color)
-        flagSpeed = deviceStatus.flagSpeed.toFloat()
-        rainbowSpeed = deviceStatus.rainbowSpeed
+        animationSpeed = deviceStatus.animationSpeed
         commonBrightness = deviceStatus.commonBrightness
-        fadeSpeed = deviceStatus.fadeSpeed
     }
 
     LaunchedEffect(errorMessage) {
@@ -150,7 +148,7 @@ fun ControlScreen(
                         }
                     )
                     when (deviceStatus.currentMode) {
-                        0, 3, 4, 8 -> {
+                        0, 8 -> {
                             key(color) {
                                 ColorControlMode(onColorChanged = { colorEnvelope: ColorEnvelope ->
                                     ledControlViewModel.setColor(colorEnvelope.hexCode)
@@ -163,16 +161,16 @@ fun ControlScreen(
 
                         1 -> {
                             RainbowMode(
-                                speed = deviceStatus.rainbowSpeed,
+                                speed = deviceStatus.animationSpeed,
                                 rainbowIsStatic = deviceStatus.rainbowIsStatic,
                                 onCheckedChange = { value ->
                                     ledControlViewModel.setRainbowStaticMode(value)
                                 },
-                                onValueChange = { value ->
-                                    rainbowSpeed = value
+                                onSpeedValueChange = { value ->
+                                    animationSpeed = value
                                 },
-                                onValueChangeFinished = {
-                                    ledControlViewModel.setRainbowSpeed(rainbowSpeed)
+                                onSpeedValueChangeFinished = {
+                                    ledControlViewModel.setAnimationSpeed(animationSpeed)
                                 },
                                 commonBrightness = commonBrightness,
                                 onBrightnessChange = { value ->
@@ -199,6 +197,46 @@ fun ControlScreen(
                             )
                         }
 
+                        3 -> {
+                            SparkleMode(
+                                color = color,
+                                speed = deviceStatus.animationSpeed,
+                                onColorChanged = { colorEnvelope: ColorEnvelope ->
+                                    ledControlViewModel.setColor(colorEnvelope.hexCode)
+                                },
+                                onColorSelected = { color ->
+                                    ledControlViewModel.setColor(color.toHexString())
+                                },
+                                controller = controller,
+                                onSpeedValueChange = { value ->
+                                    animationSpeed = value
+                                },
+                                onSpeedValueChangeFinished = {
+                                    ledControlViewModel.setAnimationSpeed(animationSpeed)
+                                },
+                            )
+                        }
+
+                        4 -> {
+                            RunningLightsMode(
+                                color = color,
+                                speed = deviceStatus.animationSpeed,
+                                onColorChanged = { colorEnvelope: ColorEnvelope ->
+                                    ledControlViewModel.setColor(colorEnvelope.hexCode)
+                                },
+                                onColorSelected = { color ->
+                                    ledControlViewModel.setColor(color.toHexString())
+                                },
+                                controller = controller,
+                                onSpeedValueChange = { value ->
+                                    animationSpeed = value
+                                },
+                                onSpeedValueChangeFinished = {
+                                    ledControlViewModel.setAnimationSpeed(animationSpeed)
+                                },
+                            )
+                        }
+
                         5 -> {
                             FireMode(
                                 commonBrightness = commonBrightness,
@@ -211,27 +249,28 @@ fun ControlScreen(
                             )
                         }
 
-                        6, 7 -> {
-                            key(color) {
-                                ColorControlMode(onColorChanged = { colorEnvelope: ColorEnvelope ->
+                        6 -> {
+                            Fade1Mode(
+                                color = color,
+                                speed = deviceStatus.animationSpeed,
+                                onColorChanged = { colorEnvelope: ColorEnvelope ->
                                     ledControlViewModel.setColor(colorEnvelope.hexCode)
-                                }, onColorSelected = { color ->
-                                    ledControlViewModel.setColor(color.toHexString())
-                                }, initialColor = color, controller = controller
-                                )
-                            }
-                            Text("Speed:", color = Color.White)
-                            Slider(
-                                value = fadeSpeed,
-                                onValueChange = { value ->
-                                    fadeSpeed = value
                                 },
-                                modifier = Modifier.padding(horizontal = 20.dp),
-                                valueRange = 10f..255f, // Значения диапазона
-                                onValueChangeFinished = {
-                                    ledControlViewModel.setFadeSpeed(fadeSpeed)
-                                }
+                                onColorSelected = { color ->
+                                    ledControlViewModel.setColor(color.toHexString())
+                                },
+                                controller = controller,
+                                onSpeedValueChange = { value ->
+                                    animationSpeed = value
+                                },
+                                onSpeedValueChangeFinished = {
+                                    ledControlViewModel.setAnimationSpeed(animationSpeed)
+                                },
                             )
+                        }
+
+                        7 -> {
+                            Fade2Mode()
                         }
 
                         9 -> {
@@ -241,10 +280,10 @@ fun ControlScreen(
                                     ledControlViewModel.setFlagState(state)
                                 },
                                 onSpeedChange = { value ->
-                                    flagSpeed = value
+                                    animationSpeed = value
                                 },
                                 onSpeedChangeFinished = {
-                                    ledControlViewModel.setFlagSpeed(flagSpeed.roundToInt())
+                                    ledControlViewModel.setAnimationSpeed(animationSpeed)
                                 },
                                 commonBrightness = commonBrightness,
                                 onBrightnessChange = { value ->
@@ -253,7 +292,7 @@ fun ControlScreen(
                                 onBrightnessChangeFinished = {
                                     ledControlViewModel.setCommonBrightness(commonBrightness)
                                 },
-                                flagSpeed = flagSpeed,
+                                flagSpeed = animationSpeed,
                             )
                         }
 
@@ -288,12 +327,9 @@ fun ControlScreen(
                             }) {
                                 if (deviceStatus.timerIsActive) {
                                     Text(
-                                        "Timer set on "
-                                                +
+                                        "Timer set on " +
                                                 "${deviceStatus.timer.hour}".padStart(2, '0')
-                                                +
-                                                ":"
-                                                +
+                                                + ":" +
                                                 "${deviceStatus.timer.minute}".padStart(2, '0'),
                                         color = Color.Black
                                     )
@@ -351,25 +387,34 @@ fun ControlScreen(
                     }
                 }
             }
-            if (isTimerWindowOpen) {
-                TimerDialog(isTimerSetOn = deviceStatus.timerIsActive, onDismissRequest = {
-                    isTimerWindowOpen = false
-                }, onSetTimerClicked = { timer ->
-                    ledControlViewModel.setTimer(timer)
-                    isTimerWindowOpen = false
-                }, onCancelTimerClicked = {
-                    ledControlViewModel.cancelTimer()
-                    isTimerWindowOpen = false
-                })
+            AnimatedVisibility(
+                visible = isTimerWindowOpen,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                TimerDialog(
+                    isTimerSetOn = deviceStatus.timerIsActive,
+                    onDismissRequest = {
+                        isTimerWindowOpen = false
+                    },
+                    onSetTimerClicked = { timer ->
+                        ledControlViewModel.setTimer(timer)
+                        isTimerWindowOpen = false
+                    },
+                    onCancelTimerClicked = {
+                        ledControlViewModel.cancelTimer()
+                        isTimerWindowOpen = false
+                    }
+                )
             }
         } else {
             ProgressIndicator(Modifier.fillMaxSize())
             scope.launch {
                 delay(3000)
+                ledControlViewModel.connect(deviceName)
+                delay(4000)
                 if (!connectionState.state) navController.popBackStack()
             }
         }
     }
 }
-
-

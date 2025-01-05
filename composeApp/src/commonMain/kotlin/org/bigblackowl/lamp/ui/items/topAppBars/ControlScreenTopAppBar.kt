@@ -48,6 +48,7 @@ fun ControlScreenTopAppBar(
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     var openInfo by remember { mutableStateOf(false) }
+
     TopAppBar(
         colors = TopAppBarColors(
             containerColor = Color.DarkGray,

@@ -19,4 +19,3 @@ val sharedModule = module {
     viewModel { MdnsViewModel(get()) }
     viewModel { WifiViewModel(get()) }
 }
-

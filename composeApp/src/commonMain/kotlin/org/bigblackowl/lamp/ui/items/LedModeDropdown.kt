@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 fun LedModeDropdown(
     currentMode: Int, modes: List<String>, onModeSelected: (Int) -> Unit
 ) {
+
     var expanded by remember { mutableStateOf(false) }
     var selectedModeIndex by remember { mutableStateOf(currentMode) }
     Button(

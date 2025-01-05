@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.bigblackowl.lamp.data.util.toHexString
+import org.bigblackowl.lamp.ui.items.sliders.BrightnessSlider
 import org.bigblackowl.lamp.ui.theme.DefaultColorList
 
 @Composable
@@ -123,15 +123,10 @@ fun GradientMode(
             }
         }
 
-        Spacer(Modifier.height(10.dp))
-
-        // Brightness Control
-        Text("Brightness:", color = Color.White)
-        Slider(
-            value = commonBrightness,
-            valueRange = 10f..255f,
-            onValueChange = onBrightnessChange,
-            onValueChangeFinished = onBrightnessChangeFinished
+        BrightnessSlider(
+            commonBrightness = commonBrightness,
+            onBrightnessChange = onBrightnessChange,
+            onBrightnessChangeFinished = onBrightnessChangeFinished
         )
     }
 }

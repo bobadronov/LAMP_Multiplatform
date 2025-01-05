@@ -5,6 +5,7 @@ import java.awt.Color as AwtColor
 
 
 actual fun parseHexColor(hex: String): Color {
+
     return try {
         val awtColor = AwtColor.decode(hex)
         Color(
@@ -16,4 +17,5 @@ actual fun parseHexColor(hex: String): Color {
     } catch (e: NumberFormatException) {
         Color.Gray // Default color in case of an error
     }
+
 }

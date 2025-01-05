@@ -27,6 +27,7 @@ fun SystemNavigation(
     wifiViewModel: WifiViewModel,
     paddingValues: PaddingValues
 ) {
+
     val navController = rememberNavController()
     val currentPlatformName = remember { Platform().getPlatformName() }
     NavHost(

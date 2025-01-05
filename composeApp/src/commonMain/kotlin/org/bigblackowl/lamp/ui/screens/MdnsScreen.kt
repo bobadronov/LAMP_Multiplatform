@@ -1,5 +1,6 @@
 package org.bigblackowl.lamp.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -99,18 +100,20 @@ fun MdnsScreen(
             ) {
                 if (devices.isNotEmpty()) {
                     items(devices.size) { index ->
-                        FoundDeviceItem(
-                            deviceName = devices[index].name,
-                            ip = devices[index].ipAddress,
-                            onClick = {
-                                println("MdnsScreen FoundDeviceItem clicked -> ${devices[index].name}")
-                                navController.navigate(
-                                    ScreensRoute.ControlScreensRoute.createRoute(
-                                        devices[index].name
+                        AnimatedVisibility(index == index) {
+                            FoundDeviceItem(
+                                deviceName = devices[index].name,
+                                ip = devices[index].ipAddress,
+                                onClick = {
+                                    println("MdnsScreen FoundDeviceItem clicked -> ${devices[index].name}")
+                                    navController.navigate(
+                                        ScreensRoute.ControlScreensRoute.createRoute(
+                                            devices[index].name
+                                        )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
+                        }
                     }
                 }
             }

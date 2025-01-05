@@ -2,6 +2,7 @@ package org.bigblackowl.lamp.core.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.cio.endpoint
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.pingInterval
@@ -23,8 +24,16 @@ import kotlin.time.Duration
 
 class WebSocketClient {
     private val client: HttpClient = HttpClient(CIO) {
+        engine {
+            maxConnectionsCount = 1000
+            endpoint {
+                keepAliveTime = 5000
+                connectTimeout = 5000
+                connectAttempts = 5
+            }
+        }
         install(WebSockets) {
-            pingInterval = Duration.INFINITE
+            pingInterval = Duration.ZERO
         }
     }
 
@@ -37,7 +46,7 @@ class WebSocketClient {
         errorListener: (ErrorStatus) -> Unit,
         connectionStateListener: (ConnectionState) -> Unit
     ) {
-        println("Attempting to connect to WebSocket server at host: $host")
+//        println("Attempting to connect to WebSocket server at host: $host")
         try {
             client.webSocket(
                 method = HttpMethod.Get, host = "$host.local", port = 80, path = "/ws"
@@ -50,7 +59,7 @@ class WebSocketClient {
                         val message = incoming.receive() as? Frame.Text
                         message?.let {
                             val text = it.readText()
-                            println("Received message: $text")
+//                            println("Received message: $text")
                             // if start with ("STATUS:") trim STATUS: then next
                             when {
                                 text.startsWith("STATUS:") -> {
@@ -139,13 +148,8 @@ class WebSocketClient {
         sendSetupMessage(message)
     }
 
-    suspend fun setFlagSpeed(flagSpeed: Int) {
-        val message = json.encodeToString(mapOf("flagSpeed" to flagSpeed))
-        sendSetupMessage(message)
-    }
-
-    suspend fun setRainbowSpeed(rainbowSpeed: Float) {
-        val message = json.encodeToString(mapOf("rainbowSpeed" to rainbowSpeed))
+    suspend fun setAnimationSpeed(animationSpeed: Float) {
+        val message = json.encodeToString(mapOf("animationSpeed" to animationSpeed))
         sendSetupMessage(message)
     }
 
@@ -230,8 +234,11 @@ class WebSocketClient {
         sendSetupMessage(message)
     }
 
-    suspend fun setFadeSpeed(fadeSpeed: Float) {
-        val message = json.encodeToString(mapOf("breathingSpeed" to fadeSpeed))
-        sendSetupMessage(message)
+    suspend fun checkConnection() {
+        try {
+            session?.send(Frame.Text("____"))
+        } catch (e: Exception) {
+            println("Error sending message: ${e.message}")
+        }
     }
 }

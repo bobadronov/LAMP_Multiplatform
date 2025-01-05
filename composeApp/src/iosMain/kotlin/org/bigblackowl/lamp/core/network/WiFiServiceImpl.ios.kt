@@ -1,17 +1,22 @@
 package org.bigblackowl.lamp.core.network
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.withContext
 import platform.Foundation.NSDictionary
 import platform.Foundation.valueForKey
-import platform.SystemConfiguration.CNCopySupportedInterfaces
 import platform.SystemConfiguration.CNCopyCurrentNetworkInfo
+import platform.SystemConfiguration.CNCopySupportedInterfaces
 
-actual class WiFiServiceImpl() : WiFiService {
+actual class WiFiServiceImpl : WiFiService {
+
     private val _availableNetworks = MutableStateFlow<List<WiFiNetwork>>(emptyList())
     actual override val availableNetworks: StateFlow<List<WiFiNetwork>> = _availableNetworks
 
-    actual suspend fun getAvailableNetworks(): List<WiFiNetwork> {
+    actual override suspend fun getAvailableNetworks() {
+        return withContext(Dispatchers.IO) {
         val interfaces = CNCopySupportedInterfaces() as? List<String> ?: return emptyList()
         val networks = mutableListOf<WiFiNetwork>()
 
@@ -21,6 +26,6 @@ actual class WiFiServiceImpl() : WiFiService {
             networks.add(WiFiNetwork(ssid = ssid)) // Уровень сигнала не доступен на iOS
         }
 
-        return networks
+        }
     }
 }
