@@ -49,4 +49,5 @@ actual class WiFiServiceImpl(private val context: Context) : WiFiService {
             WiFiNetwork(ssid = it.wifiSsid.toString()) // Use SSID as the network name
         }
     }
+
 }

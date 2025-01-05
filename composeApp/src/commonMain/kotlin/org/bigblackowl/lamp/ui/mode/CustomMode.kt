@@ -34,7 +34,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import org.bigblackowl.lamp.data.util.parseHexColor
+import org.bigblackowl.lamp.data.util.parseStringHexToColor
 import org.bigblackowl.lamp.data.util.toHexString
 import org.bigblackowl.lamp.ui.theme.DefaultColorList
 
@@ -46,9 +46,10 @@ fun CustomMode(
     onBrightnessChange: (Float) -> Unit,
     onBrightnessChangeFinished: () -> Unit,
 ) {
+
     var selectedColor by remember { mutableStateOf(Color.Black) }
     var ledColors by remember { mutableStateOf(List(10) { "#000000" }) }
-    val squareSize = 50.dp
+    val squareSize = 35.dp
 
     LaunchedEffect(colorList) {
         ledColors = colorList
@@ -161,61 +162,61 @@ fun CustomMode(
 
                 // Draw each square manually
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(0) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(0) { "#000000" }),
                     topLeft = Offset(startX, 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(1) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(1) { "#000000" }),
                     topLeft = Offset(startX + squareSize.toPx() + 5.dp.toPx(), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(2) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(2) { "#000000" }),
                     topLeft = Offset(startX + 2 * (squareSize.toPx() + 5.dp.toPx()), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(3) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(3) { "#000000" }),
                     topLeft = Offset(startX + 3 * (squareSize.toPx() + 5.dp.toPx()), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(4) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(4) { "#000000" }),
                     topLeft = Offset(startX + 4 * (squareSize.toPx() + 5.dp.toPx()), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(5) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(5) { "#000000" }),
                     topLeft = Offset(startX + 5 * (squareSize.toPx() + 5.dp.toPx()), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(6) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(6) { "#000000" }),
                     topLeft = Offset(startX + 6 * (squareSize.toPx() + 5.dp.toPx()), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(7) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(7) { "#000000" }),
                     topLeft = Offset(startX + 7 * (squareSize.toPx() + 5.dp.toPx()), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(8) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(8) { "#000000" }),
                     topLeft = Offset(startX + 8 * (squareSize.toPx() + 5.dp.toPx()), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )
 
                 drawRect(
-                    color = parseHexColor(ledColors.getOrElse(9) { "#000000" }),
+                    color = parseStringHexToColor(ledColors.getOrElse(9) { "#000000" }),
                     topLeft = Offset(startX + 9 * (squareSize.toPx() + 5.dp.toPx()), 0f),
                     size = Size(squareSize.toPx(), squareSize.toPx())
                 )

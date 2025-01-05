@@ -12,12 +12,13 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+
 kotlin {
     tasks.create("testClasses")
 
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_18)
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
 
@@ -41,7 +42,6 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.ktor.client.okhttp)
-            implementation(libs.dns.sd.kt.android.debug)
         }
 
         commonMain.dependencies {
@@ -62,33 +62,29 @@ kotlin {
             implementation(libs.bundles.ktor)
             implementation(libs.colorpicker.compose)
             implementation(libs.dns.sd.kt)
+
+            implementation(libs.slf4j.simple)
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
+
         }
 
-        nativeMain.dependencies {
+        iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
     }
-
-//    mingwX64("windows")
-//    mingwX64("windows") {
-//        binaries {
-//            executable {
-//                entryPoint = "main"
-//            }
-//        }
-//    }
 }
+
 
 android {
     namespace = "org.bigblackowl.lamp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     description = "BigBlackOwl"
+
     defaultConfig {
         applicationId = "org.bigblackowl.lamp"
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -96,6 +92,7 @@ android {
         versionCode = 1
         versionName = version
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -107,40 +104,47 @@ android {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_18
-        targetCompatibility = JavaVersion.VERSION_18
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
 dependencies {
     debugImplementation(compose.uiTooling)
     coreLibraryDesugaring(libs.desugaring)
+//    implementation(libs.proguard.gradle)
 }
 
 compose.desktop {
+
     application {
+
         mainClass = "org.bigblackowl.lamp.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ESP_LAMP_Multiplatform"
             description = "BigBlackOwl"
             packageVersion = version
-//            macOS {
-//                iconFile.set(project.file("icon.icns"))
-//            }
+            macOS {
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/on-off.icns"))
+            }
             windows {
                 iconFile.set(project.file("src/commonMain/composeResources/drawable/on-off.ico"))
                 dirChooser = true
 
             }
-//            linux {
-//                iconFile.set(project.file("icon.png"))
-//            }
+            linux {
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/on-off.png"))
+            }
         }
+
         buildTypes.release.proguard {
-            version.set("7.4.0")
+//            version.set("7.0.0")
+            configurationFiles.from("rules.pro")
         }
     }
 }
+

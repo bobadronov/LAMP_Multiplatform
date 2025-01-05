@@ -24,7 +24,6 @@ val DefaultColorList = listOf(
     Color(0xffb023ff)
 )
 
-
 val DarkBackground = Color(0xff171717)
 val LightBackground = Color(0xffafaeae)
 

@@ -30,4 +30,5 @@ interface MdnsService {
     fun stopDiscovery()
 }
 
+
 data class MdnsDevice(val name: String, val ipAddress: String)

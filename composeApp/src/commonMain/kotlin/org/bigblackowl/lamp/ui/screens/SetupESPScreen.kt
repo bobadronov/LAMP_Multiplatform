@@ -65,6 +65,7 @@ import org.bigblackowl.lamp.data.SetupEspCredential
 import org.bigblackowl.lamp.ui.navigation.ScreensRoute
 import org.bigblackowl.lamp.ui.theme.neonTextFieldColors
 import org.bigblackowl.lamp.ui.viewmodel.LedControlViewModel
+import org.bigblackowl.lamp.ui.viewmodel.MdnsViewModel
 import org.bigblackowl.lamp.ui.viewmodel.WifiViewModel
 import org.jetbrains.compose.resources.painterResource
 
@@ -73,6 +74,7 @@ import org.jetbrains.compose.resources.painterResource
 fun SetupESPScreen(
     ledControlViewModel: LedControlViewModel,
     wifiViewModel: WifiViewModel,
+    mdnsViewModel: MdnsViewModel,
     navController: NavHostController,
 ) {
     val deviceStatus by ledControlViewModel.deviceStatus.collectAsState()
@@ -119,7 +121,11 @@ fun SetupESPScreen(
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
+        Column(
+            modifier = Modifier.padding(padding).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
 //                containerColor = Color.Gray,
@@ -150,7 +156,7 @@ fun SetupESPScreen(
                 }
             }
 
-            HorizontalPager(state = pagerState) { page ->
+            HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
                 when (page) {
                     0 -> {
                         WiFiSetupTab(
@@ -169,8 +175,15 @@ fun SetupESPScreen(
                             deviceName = deviceName,
                             onDeviceNameChange = { deviceName = it },
                             connectionState = connectionState,
-                            ledControlViewModel = ledControlViewModel,
-                            navController = navController
+                            setupEsp = {
+                                ledControlViewModel.setupESP(
+                                    SetupEspCredential(ssid.text, pass.text, deviceName.text)
+                                )
+                                mdnsViewModel.setFilter(deviceName.text)
+                                navController.navigate(ScreensRoute.MdnsScreensRoute.route) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
                         )
                     }
 
@@ -189,7 +202,7 @@ fun SetupESPScreen(
                     }
                 }
             }
-            Spacer(Modifier.height(100.dp))
+            Spacer(Modifier.height(30.dp))
 
             // Buttons
             Button(onClick = { navController.popBackStack() }) {
@@ -208,10 +221,10 @@ fun LedSetupTab(
 ) {
     Column(
         modifier = Modifier
-            .padding(20.dp)
-            .fillMaxSize(),
+            .fillMaxWidth()
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(50.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically)
     ) {
         TextField(
             value = ledCount,
@@ -242,6 +255,7 @@ fun LedSetupTab(
                 Text("1800")
             }
         }
+
         if (!isLedCountValid) {
             Text(
                 text = "Please enter a valid number between 1 and 1800.",
@@ -249,7 +263,12 @@ fun LedSetupTab(
                 style = MaterialTheme.typography.bodySmall
             )
         }
-        Button(onClick = onSetLedCount, enabled = isLedCountValid) {
+
+        Button(
+            onClick = onSetLedCount,
+            modifier = Modifier.padding(bottom = 30.dp),
+            enabled = isLedCountValid
+        ) {
             Text("Set LED Count")
         }
     }
@@ -276,13 +295,12 @@ fun WiFiSetupTab(
     deviceName: TextFieldValue,
     onDeviceNameChange: (TextFieldValue) -> Unit,
     connectionState: ConnectionState,
-    ledControlViewModel: LedControlViewModel,
-    navController: NavHostController
+    setupEsp: () -> Unit,
 ) {
     Column(
         modifier = Modifier
-            .padding(20.dp)
-            .fillMaxSize(),
+            .fillMaxWidth()
+            .padding(20.dp),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -357,17 +375,11 @@ fun WiFiSetupTab(
             isError = deviceName.text.isBlank() || deviceName.text.length < 3,
             colors = neonTextFieldColors
         )
-        if (connectionState.state && pass.text.isNotBlank() && pass.text.length >= 8 && ssid.text.isNotBlank() && ssid.text.length >= 2) {
-            Button(onClick = {
-                ledControlViewModel.setupESP(
-                    SetupEspCredential(ssid.text, pass.text, deviceName.text)
-                )
-                navController.navigate(ScreensRoute.MdnsScreensRoute.route) {
-                    popUpTo(0) { inclusive = true }
-                }
-            }) {
-                Text("Setup Wi-Fi")
-            }
+        Button(
+            onClick = setupEsp,
+            enabled = connectionState.state && pass.text.isNotBlank() && pass.text.length >= 8 && ssid.text.isNotBlank() && ssid.text.length >= 2
+        ) {
+            Text("Setup Wi-Fi")
         }
     }
 }

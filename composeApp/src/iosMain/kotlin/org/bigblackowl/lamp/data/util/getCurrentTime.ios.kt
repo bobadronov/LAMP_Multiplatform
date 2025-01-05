@@ -1,6 +1,10 @@
 package org.bigblackowl.lamp.data.util
 
 import org.bigblackowl.lamp.data.Timer
+import platform.Foundation.NSCalendar
+import platform.Foundation.NSCalendarUnitHour
+import platform.Foundation.NSCalendarUnitYear
+import platform.Foundation.NSDate
 
 
 actual fun getCurrentTime(): Timer {
@@ -11,6 +15,7 @@ actual fun getCurrentTime(): Timer {
                 NSCalendarUnitHour or NSCalendarUnitMinute,
         fromDate = date
     )
+
     return Timer(
         day = components.day.toInt(),
         month = components.month.toInt(),

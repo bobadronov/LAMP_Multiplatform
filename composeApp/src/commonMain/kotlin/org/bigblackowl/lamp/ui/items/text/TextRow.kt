@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TextRow(label: String, value: String) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()

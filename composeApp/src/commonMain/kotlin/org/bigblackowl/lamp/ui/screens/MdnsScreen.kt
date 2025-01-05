@@ -1,5 +1,7 @@
 package org.bigblackowl.lamp.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,23 +21,33 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import lamp_multiplatform.composeapp.generated.resources.Res
+import lamp_multiplatform.composeapp.generated.resources.microscheme
 import org.bigblackowl.lamp.core.mdns.PlatformPermission
 import org.bigblackowl.lamp.ui.items.FoundDeviceItem
+import org.bigblackowl.lamp.ui.items.dialog.FilterDialog
 import org.bigblackowl.lamp.ui.items.topAppBars.MdnsScreenTopAppBar
 import org.bigblackowl.lamp.ui.navigation.ScreensRoute
 import org.bigblackowl.lamp.ui.theme.SurfaceColor
 import org.bigblackowl.lamp.ui.viewmodel.MdnsViewModel
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +61,10 @@ fun MdnsScreen(
         println(Locale.current.language)
     }
     val devices by mdnsViewModel.devices.collectAsState()
+    val filter by mdnsViewModel.deviceFilter.collectAsState()
     val state = rememberPullToRefreshState()
+    var openFilterDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +75,9 @@ fun MdnsScreen(
                 } else false
             },
         topBar = {
-            MdnsScreenTopAppBar()
+            MdnsScreenTopAppBar(onFilterClick = {
+                openFilterDialog = true
+            })
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -75,6 +92,16 @@ fun MdnsScreen(
         },
         floatingActionButtonPosition = FabPosition.EndOverlay
     ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .paint(
+                    painter = painterResource(Res.drawable.microscheme),
+                    colorFilter = ColorFilter.tint(Color.White),
+                    contentScale = ContentScale.FillHeight,
+                    alpha = .1f,
+                )
+        )
         PullToRefreshBox(
             isRefreshing = devices.isEmpty(),
             onRefresh = {
@@ -99,18 +126,20 @@ fun MdnsScreen(
             ) {
                 if (devices.isNotEmpty()) {
                     items(devices.size) { index ->
-                        FoundDeviceItem(
-                            deviceName = devices[index].name,
-                            ip = devices[index].ipAddress,
-                            onClick = {
-                                println("MdnsScreen FoundDeviceItem clicked -> ${devices[index].name}")
-                                navController.navigate(
-                                    ScreensRoute.ControlScreensRoute.createRoute(
-                                        devices[index].name
+                        AnimatedVisibility(index == index) {
+                            FoundDeviceItem(
+                                deviceName = devices[index].name,
+                                ip = devices[index].ipAddress,
+                                onClick = {
+                                    println("MdnsScreen FoundDeviceItem clicked -> ${devices[index].name}")
+                                    navController.navigate(
+                                        ScreensRoute.ControlScreensRoute.createRoute(
+                                            devices[index].name
+                                        )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -122,6 +151,16 @@ fun MdnsScreen(
             println("mDNS DisposableEffect discovery stopped")
             mdnsViewModel.stopDiscovery()
         }
+    }
+
+    if (openFilterDialog) {
+        FilterDialog(
+            filterValue = filter,
+            onDismissRequest = { openFilterDialog = false },
+            onFilter = { newFilter ->
+                mdnsViewModel.setFilter(newFilter)
+            }
+        )
     }
 }
 

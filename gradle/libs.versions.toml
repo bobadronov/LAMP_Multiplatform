@@ -6,16 +6,18 @@ android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
 androidx-lifecycle = "2.8.4"
 colorpickerCompose = "1.1.2"
-compose-multiplatform = "1.7.0"
+compose-multiplatform = "1.7.1"
 dnsSdKt = "1.0.4"
 kotlin = "2.1.0"
-kotlinx-coroutines = "1.9.0"
+kotlinx-coroutines = "1.10.1"
 ksp = "2.1.0-1.0.29"
 navigationCompose = "2.8.0-alpha10"
 kotlinSerialization = "1.7.3"
 koin = "4.0.0"
 ktor = "3.0.2"
 desugaring = "2.1.4"
+proguardGradle = "7.4.0"
+slf4jSimple = "2.0.16"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -23,7 +25,6 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 
 dns-sd-kt = { module = "com.appstractive:dns-sd-kt", version.ref = "dnsSdKt" }
-dns-sd-kt-android-debug = { module = "com.appstractive:dns-sd-kt-android-debug", version.ref = "dnsSdKt" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 
 jetbrains-compose-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
@@ -45,6 +46,8 @@ ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.re
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpickerCompose" }
+proguard-gradle = { module = "com.guardsquare:proguard-gradle", version.ref = "proguardGradle" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

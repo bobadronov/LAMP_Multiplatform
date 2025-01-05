@@ -6,7 +6,7 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 
-actual fun parseHexColor(hex: String): Color {
+actual fun parseStringHexToColor(hex: String): Color {
     return if (hex.isNotEmpty() && hex.startsWith("#")) {
         try {
             // Try to parse the color

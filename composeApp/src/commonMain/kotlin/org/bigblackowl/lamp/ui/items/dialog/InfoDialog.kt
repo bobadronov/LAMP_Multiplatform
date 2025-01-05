@@ -66,11 +66,10 @@ fun InfoDialog(
 
                 // Настройки радуги
                 TextRow(label = "Rainbow Static", value = deviceStatus.rainbowIsStatic.toString())
-                TextRow(label = "Rainbow Speed", value = deviceStatus.rainbowSpeed.toString())
+                TextRow(label = "Rainbow Speed", value = deviceStatus.animationSpeed.toString())
 
                 // Настройки флага
                 TextRow(label = "Flag Static", value = deviceStatus.flagIsStatic.toString())
-                TextRow(label = "Flag Speed", value = deviceStatus.flagSpeed.toString())
 
                 // Кнопка "Закрыть"
                 Spacer(modifier = Modifier.height(20.dp))
@@ -87,4 +86,5 @@ fun InfoDialog(
             }
         }
     }
+
 }

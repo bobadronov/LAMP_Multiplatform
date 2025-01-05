@@ -37,4 +37,5 @@ actual class PlatformPermission actual constructor() {
             )
         }
     }
+
 }

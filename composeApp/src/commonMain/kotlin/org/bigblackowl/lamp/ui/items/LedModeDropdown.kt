@@ -1,5 +1,8 @@
 package org.bigblackowl.lamp.ui.items
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
@@ -8,6 +11,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -19,8 +23,12 @@ import androidx.compose.ui.graphics.Color
 fun LedModeDropdown(
     currentMode: Int, modes: List<String>, onModeSelected: (Int) -> Unit
 ) {
+
     var expanded by remember { mutableStateOf(false) }
     var selectedModeIndex by remember { mutableStateOf(currentMode) }
+    key(currentMode) {
+        selectedModeIndex = currentMode
+    }
     Button(
         onClick = {
             expanded = true
@@ -29,20 +37,29 @@ fun LedModeDropdown(
     ) {
         Text(text = "Mode: ${modes[selectedModeIndex]}", color = Color.Black)
         // Выпадающее меню
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth(.4f)
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(),
+            exit = fadeOut(),
         ) {
-            modes.forEachIndexed { index, mode ->
-                DropdownMenuItem(text = {
-                    Text(text = mode, modifier = Modifier.wrapContentSize(Alignment.Center))
-                }, onClick = {
-                    selectedModeIndex = index
-                    onModeSelected(index)
-                    expanded = false
-                }, modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth(.4f)
+            ) {
+                modes.forEachIndexed { index, mode ->
+                    DropdownMenuItem(text = {
+                        Text(
+                            text = "[$index] $mode",
+                            modifier = Modifier.wrapContentSize(Alignment.Center)
+                        )
+                    }, onClick = {
+                        selectedModeIndex = index
+                        onModeSelected(index)
+                        expanded = false
+                    }, modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
             }
         }
     }

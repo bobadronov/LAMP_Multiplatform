@@ -12,6 +12,7 @@ fun LampTheme(
     // Choose the color palette based on the current theme mode
     val colors = if (darkTheme) darkColorPalette else lightColorPalette
 
+
     // Apply the MaterialTheme with color scheme, typography, and shapes
     MaterialTheme(
         colorScheme = colors,

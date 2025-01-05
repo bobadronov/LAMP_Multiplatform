@@ -27,6 +27,7 @@ fun SystemNavigation(
     wifiViewModel: WifiViewModel,
     paddingValues: PaddingValues
 ) {
+
     val navController = rememberNavController()
     val currentPlatformName = remember { Platform().getPlatformName() }
     NavHost(
@@ -48,7 +49,7 @@ fun SystemNavigation(
         }
 
         composable(route = ScreensRoute.SetupESPScreen.route) {
-            SetupESPScreen(ledControlViewModel, wifiViewModel, navController)
+            SetupESPScreen(ledControlViewModel, wifiViewModel, mdnsViewModel, navController)
         }
     }
 }

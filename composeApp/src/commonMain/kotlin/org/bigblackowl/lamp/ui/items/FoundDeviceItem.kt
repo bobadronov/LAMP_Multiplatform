@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +23,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun FoundDeviceItem(deviceName: String, ip: String?, onClick: () -> Unit) {
-    Card(
+
+    ElevatedCard(
         modifier = Modifier.fillMaxWidth().padding(vertical = 15.dp),
         shape = RoundedCornerShape(25.dp),
         colors = CardColors(
@@ -31,6 +33,7 @@ fun FoundDeviceItem(deviceName: String, ip: String?, onClick: () -> Unit) {
             disabledContainerColor = Color.Unspecified,
             disabledContentColor = Color.Unspecified
         ),
+        elevation = CardDefaults.elevatedCardElevation(10.dp),
         onClick = onClick
     ) {
         Row(

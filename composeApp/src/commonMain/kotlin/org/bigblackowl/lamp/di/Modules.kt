@@ -15,8 +15,8 @@ expect val platformModule: Module
 val sharedModule = module {
     single { WebSocketClient() }
     single { MdnsServiceFactory().createMdnsService() }
+
     viewModel { LedControlViewModel(get()) }
-    viewModel { MdnsViewModel(get()) }
+    viewModel { MdnsViewModel(get(), get()) }
     viewModel { WifiViewModel(get()) }
 }
-

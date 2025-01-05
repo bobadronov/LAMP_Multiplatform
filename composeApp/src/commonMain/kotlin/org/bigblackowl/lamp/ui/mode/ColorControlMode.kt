@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,14 +31,14 @@ fun ColorControlMode(
     initialColor: Color,
     controller: ColorPickerController
 ) {
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HsvColorPicker(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .padding(bottom = 20.dp),
+                .fillMaxHeight(.38f)
+                .padding(bottom = 15.dp),
             controller = controller,
             onColorChanged = onColorChanged,
             initialColor = initialColor
@@ -45,7 +46,7 @@ fun ColorControlMode(
         BrightnessSlider(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .fillMaxHeight(.1f)
                 .padding(horizontal = 20.dp), controller = controller
         )
         Spacer(Modifier.height(10.dp))
@@ -59,8 +60,8 @@ fun ColorControlMode(
             items(DefaultColorList.size) { index ->
                 Box(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .height(40.dp)
+                        .padding(8.dp)
+                        .height(38.dp)
                         .clickable { onColorSelected(DefaultColorList[index]) }
                         .background(
                             DefaultColorList[index],

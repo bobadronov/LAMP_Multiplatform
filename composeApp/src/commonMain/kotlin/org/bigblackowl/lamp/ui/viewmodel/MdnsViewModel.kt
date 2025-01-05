@@ -8,13 +8,24 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.bigblackowl.lamp.core.mdns.MdnsDevice
 import org.bigblackowl.lamp.core.mdns.MdnsService
+import org.bigblackowl.lamp.data.DataKey
+import org.bigblackowl.lamp.datastorage.DataStorage
 
 class MdnsViewModel(
-    private val mdnsService: MdnsService
+    private val mdnsService: MdnsService,
+    private val dataStorage: DataStorage
 ) : ViewModel() {
+
+    private val _deviceFilter = MutableStateFlow("-LED")
+    val deviceFilter: StateFlow<String> = _deviceFilter
 
     private val _devices = MutableStateFlow<List<MdnsDevice>>(emptyList())
     val devices: StateFlow<List<MdnsDevice>> = _devices
+
+    init {
+        val filter = getValue(DataKey.KEY.keyName) ?: "-LED"
+        _deviceFilter.value = filter
+    }
 
     fun startDiscovery() {
         stopDiscovery()
@@ -48,6 +59,12 @@ class MdnsViewModel(
         }
     }
 
+    fun setFilter(filter: String) {
+        _deviceFilter.value = filter
+        saveValue(DataKey.KEY.keyName, filter)
+        startDiscovery()
+    }
+
     fun stopDiscovery() {
         viewModelScope.launch {
             try {
@@ -74,11 +91,25 @@ class MdnsViewModel(
                 add(device) // Добавляем новое устройство
             }
         }
+        filterDevices()
     }
 
     private fun removeDevice(device: MdnsDevice) {
         _devices.value = _devices.value.toMutableList().apply {
             removeAll { it.name == device.name }
         }
+        filterDevices()
+    }
+
+    private fun filterDevices() {
+        _devices.value = _devices.value.filter { it.name.contains(_deviceFilter.value) }
+    }
+
+    private fun saveValue(key: String, value: String) {
+        dataStorage.save(key, value)
+    }
+
+    private fun getValue(key: String): String? {
+        return dataStorage.get(key)
     }
 }

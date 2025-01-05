@@ -8,7 +8,10 @@ import kotlinx.coroutines.launch
 import org.bigblackowl.lamp.core.network.WiFiNetwork
 import org.bigblackowl.lamp.core.network.WiFiServiceImpl
 
-class WifiViewModel(private val wifiService: WiFiServiceImpl) : ViewModel() {
+class WifiViewModel(
+    private val wifiService: WiFiServiceImpl
+) : ViewModel() {
+
     private val _wifiNetworks = MutableStateFlow<List<WiFiNetwork>>(emptyList())
     val wifiNetworks: StateFlow<List<WiFiNetwork>> = _wifiNetworks
 
@@ -18,7 +21,6 @@ class WifiViewModel(private val wifiService: WiFiServiceImpl) : ViewModel() {
                 wifiService.getAvailableNetworks() // Fetch networks from WiFiService
                 _wifiNetworks.value = wifiService.availableNetworks.value // Update ViewModel with networks
             } catch (e: Exception) {
-                println("Error loading networks: ${e.message}")
                 _wifiNetworks.value = emptyList() // Reset to empty list in case of error
             }
         }

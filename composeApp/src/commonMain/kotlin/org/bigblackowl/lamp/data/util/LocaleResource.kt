@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.text.intl.Locale
 
-
 @Composable
 fun Locale() {
     LaunchedEffect(Unit) {
