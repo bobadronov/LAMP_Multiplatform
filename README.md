@@ -4,17 +4,14 @@ A smart LED lamp controlled by an ESP32 microcontroller, offering various lighti
 sensor integrations. The project uses Kotlin Multiplatform for the app, providing cross-platform
 support across Android, Windows, and iOS.
 
-**App repository:** [LAMP_Multiplatform](https://github.com/bobadronov/LAMP_Multiplatform)
+**code repository for Arduino:** [LAMP_Arduino](https://github.com/bobadronov/LAMP_Arduino)
 
 ## Tested Platforms
 
 | Platform | Status        |
 |----------|---------------|
-| Android  | ✅ Tested      |
-| Windows  | ✅ Tested      |
-| MacOS    | ⚠️ Not tested |
-| iOS      | ⚠️ Not tested |
-| Linux    | ⚠️ Not tested |
+| ESP32 (ESP-WROOM-32)  | ✅ Tested      |
+
 
 ## Overview
 
@@ -72,4 +69,4 @@ a temperature and humidity sensor (DHT11).
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/bobadronov/LAMP_Arduino.git
+   git clone https://github.com/bobadronov/LAMP_Multiplatform.git
