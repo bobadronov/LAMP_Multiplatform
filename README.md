@@ -1,16 +1,75 @@
-{
-"ledState": true
-}This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
+# LAMP_Arduino
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+A smart LED lamp controlled by an ESP32 microcontroller, offering various lighting effects and
+sensor integrations. The project uses Kotlin Multiplatform for the app, providing cross-platform
+support across Android, Windows, and iOS.
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+**App repository:** [LAMP_Multiplatform](https://github.com/bobadronov/LAMP_Multiplatform)
 
+## Tested Platforms
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+| Platform | Status        |
+|----------|---------------|
+| Android  | ✅ Tested      |
+| Windows  | ✅ Tested      |
+| MacOS    | ⚠️ Not tested |
+| iOS      | ⚠️ Not tested |
+| Linux    | ⚠️ Not tested |
+
+## Overview
+
+LAMP_Arduino is a project for creating a smart LED lamp controlled by an ESP32 microcontroller. It
+supports various effects, integrates with a real-time clock module (DS3231), and optionally supports
+a temperature and humidity sensor (DHT11).
+
+## Features
+
+- Wi-Fi configuration through a captive portal
+- Wireless controll via WiFi on Android, iOS, Windows
+- Multiple LED effects (static colors, rainbow, fire, etc.)
+- Real-time clock integration (DS3231) for time-based operations
+- Optional temperature and humidity monitoring (DHT11)
+- Button support for additional input options
+- NTP synchronization for accurate timekeeping
+
+## Requirements
+
+### Hardware
+
+- **ESP32**
+- **WS2812B LED strip**
+- **DS3231** (optional)
+- **DHT11** (optional)
+
+## Wiring Diagram
+
+### WS2812B to ESP32
+
+| WS2812B Pin | ESP32 Pin |
+|-------------|-----------|
+| GND         | GND       |
+| VCC         | 5V        |
+| Data In     | GPIO12    |
+
+### DS3231 to ESP32
+
+| DS3231 Module Pin | ESP32 Pin        |
+|-------------------|------------------|
+| GND               | GND              |
+| VCC               | 3.3V             |
+| SDA               | GPIO21 (I2C SDA) |
+| SCL               | GPIO22 (I2C SCL) |
+
+### DHT11 to ESP32
+
+| DHT11 Pin | ESP32 Pin |
+|-----------|-----------|
+| Data      | GPIO15    |
+| GND       | GND       |
+| VCC       | 5V        |
+
+## Installation
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/bobadronov/LAMP_Arduino.git
